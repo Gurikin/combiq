@@ -12,6 +12,12 @@
         <div class="co-titler">
             <img class="hidden-xs hidden-sm" src="/static/images/background.svg">
 
+            <div class="co-mainhead-androidapp">
+                <a href="https://play.google.com/store/apps/details?id=ru.atott.combiq.android">
+                    <img style="width: 210px;" alt='Доступно на Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/ru_badge_web_generic.png'/>
+                </a>
+            </div>
+
             <div class="co-mainhead text-center">
                 <img class="hidden-xs" src="/static/images/site/titler.png">
 

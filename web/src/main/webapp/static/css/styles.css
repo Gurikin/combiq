@@ -29,6 +29,16 @@ a:focus {
     text-decoration: none;
 }
 
+.co-mainhead-androidapp {
+    position: relative;
+}
+
+.co-mainhead-androidapp > a {
+    position: absolute;
+    right: 0;
+    top: 40px;
+}
+
 .co-mainhead {
     margin-top: 120px;
     overflow-y: hidden;
@@ -1119,15 +1129,13 @@ ul.co-component-question-tags > li {
 
 @media (max-width: 767px) {
     .co-mainhead {
-        margin-top: 40px;
+        margin-top: 20px;
     }
 
     .co-mainer {
         margin-top: 10px;
     }
-}
 
-@media (max-width: 767px) {
     .co-menu-top-items > li {
         display: block;
     }
@@ -1156,9 +1164,21 @@ ul.co-component-question-tags > li {
     .co-rightbordered {
         border-right: none;
     }
+
+    .co-mainhead-androidapp > a {
+        position: relative;
+        display: block;
+        top: auto;
+        right: auto;
+    }
 }
 
 @media (min-width: 768px) and (max-width: 991px) {
+
+    .co-mainer {
+        margin-top: 80px;
+    }
+
     .co-menu-top-items > li > a {
         padding: 20px 10px;
     }
