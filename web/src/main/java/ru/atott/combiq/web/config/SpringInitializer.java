@@ -12,8 +12,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.ResourceHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.xml.SourceHttpMessageConverter;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
@@ -43,6 +45,7 @@ import ru.atott.combiq.web.security.ElasticSearchTokenRepositoryImpl;
 
 import javax.servlet.Filter;
 import javax.servlet.ServletRegistration;
+import javax.xml.transform.Source;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.List;
@@ -154,20 +157,22 @@ public class SpringInitializer extends AbstractAnnotationConfigDispatcherServlet
 
         @Override
         public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-            objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ"));
-            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-            MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-            converter.setObjectMapper(objectMapper);
-            converters.add(converter);
+            converters.add(new ByteArrayHttpMessageConverter());
 
             StringHttpMessageConverter stringConverter = new StringHttpMessageConverter();
             stringConverter.setWriteAcceptCharset(false);
             converters.add(stringConverter);
 
-            converters.add(new ByteArrayHttpMessageConverter());
+            converters.add(new ResourceHttpMessageConverter());
+            converters.add(new SourceHttpMessageConverter<Source>());
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+            objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ"));
+            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+            converter.setObjectMapper(objectMapper);
+            converters.add(converter);
 
             super.configureMessageConverters(converters);
         }

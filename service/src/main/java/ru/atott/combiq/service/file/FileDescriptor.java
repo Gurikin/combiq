@@ -1,8 +1,12 @@
 package ru.atott.combiq.service.file;
 
+import org.apache.commons.io.IOUtils;
+
+import java.io.Closeable;
+import java.io.IOException;
 import java.io.InputStream;
 
-public class FileDescriptor {
+public class FileDescriptor implements Closeable {
 
     private Location location;
 
@@ -32,5 +36,16 @@ public class FileDescriptor {
 
     public void setInputStream(InputStream inputStream) {
         this.inputStream = inputStream;
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        close();
+    }
+
+    @Override
+    public void close() {
+        IOUtils.closeQuietly(inputStream);
     }
 }

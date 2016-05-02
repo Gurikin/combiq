@@ -24,7 +24,7 @@ define(['ajax'], function(ajax) {
             method: 'POST'
         }).done(function() {
             coMarkdown
-                .toHtml(self.editorMarkdown())
+                .toHtml({markdown: self.editorMarkdown()})
                 .done(function(html) {
                     self.html(html);
                 })

@@ -12,15 +12,17 @@ var coSearch = {
 var coMarkdown = {
 
     toHtml: function(markdown) {
-        markdown = ko.unwrap(markdown);
+        var deferred = new $.Deferred();
 
-        return $.ajax({
-            url: '/markdown/preview',
-            datatype: 'text',
-            contentType: 'text/plain',
-            data: markdown,
-            method: 'POST'
+        require(['ajax'], function(ajax) {
+            ajax
+                .rest('POST', '/rest/v1/markdown', {markdown: ko.unwrap(markdown.markdown)})
+                .done(function(response) {
+                    deferred.resolve(response.html);
+                });
         });
+
+        return deferred.promise();
     }
 };
 

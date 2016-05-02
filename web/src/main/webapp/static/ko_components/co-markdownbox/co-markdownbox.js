@@ -74,7 +74,7 @@ define(['ajax', 'knockout'], function(ajax, ko) {
         ko.openDialog('co-uploadimage')
             .done(function(location) {
                 var parts = location.split(':');
-                self.insertText('![' + parts[parts.length - 1] + '](/markdown/image?loc=' + encodeURIComponent(location) + ')');
+                self.insertText('![' + parts[parts.length - 1] + '](/rest/v1/markdown/image/' + encodeURIComponent(location));
                 self.focus();
             });
     };
@@ -87,7 +87,7 @@ define(['ajax', 'knockout'], function(ajax, ko) {
         var self = this;
 
         coMarkdown
-            .toHtml(self.text())
+            .toHtml({markdown: self.text()})
             .done(function(html) {
                 self.preview(html);
             });

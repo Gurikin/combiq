@@ -20,17 +20,9 @@ public class MarkdownContentBean {
 
     public MarkdownContentBean(MarkdownContent content) {
         if (content != null) {
-            markdown = content.getMarkdown();
             html = content.getHtml();
+            markdown = content.getMarkdown();
         }
-    }
-
-    public String getMarkdown() {
-        return markdown;
-    }
-
-    public void setMarkdown(String markdown) {
-        this.markdown = markdown;
     }
 
     public String getHtml() {
@@ -39,5 +31,13 @@ public class MarkdownContentBean {
 
     public void setHtml(String html) {
         this.html = html;
+    }
+
+    public String getMarkdown() {
+        return markdown;
+    }
+
+    public void setMarkdown(String markdown) {
+        this.markdown = markdown;
     }
 }

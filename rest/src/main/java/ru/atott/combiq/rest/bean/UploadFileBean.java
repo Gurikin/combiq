@@ -1,10 +1,16 @@
-package ru.atott.combiq.web.bean;
+package ru.atott.combiq.rest.bean;
 
 import ru.atott.combiq.service.file.Location;
 
 public class UploadFileBean {
 
     private String location;
+
+    public static UploadFileBean EXAMPLE;
+
+    static {
+        EXAMPLE = new UploadFileBean("imageAddress");
+    }
 
     public UploadFileBean() { }
 

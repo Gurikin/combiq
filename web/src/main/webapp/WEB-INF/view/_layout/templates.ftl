@@ -117,6 +117,7 @@
                             <strong>Combiq.ru, 2014-2016</strong><span class="hidden-xs hidden-sm">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;
                             <a href="http://forum.combiq.ru/">Форум</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;
                             <a href="/donate">Поддержать проект</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;
+                            <a href="https://play.google.com/store/apps/details?id=ru.atott.combiq.android">Доступно на Google Play<sup>TM</sup></a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;
                             <a href="http://jira.combiq.ru/">
                                 <img style="margin-top: -12px;" src="/static/images/social/jirasoftware_rgb_white_atlassian.png" alt="JIRA">
                             </a></span>

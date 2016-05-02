@@ -47,6 +47,5 @@ public class TagsController extends BaseController {
         tag.setSuggestViewOthersQuestionsLabel(editTagRequest.getSuggestViewOthersQuestionsLabel());
         tagService.save(tag);
         return new SuccessBean();
-
     }
 }
