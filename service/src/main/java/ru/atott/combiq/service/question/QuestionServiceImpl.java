@@ -52,6 +52,9 @@ public class QuestionServiceImpl implements QuestionService {
     @Autowired
     TransletirateService transletirateService;
 
+    @Autowired
+    private QuestionMapper questionMapper;
+
     @Override
     public void saveComment(UserContext uc, String questionId, String comment) {
         Validate.isTrue(!uc.isAnonimous());
@@ -148,7 +151,9 @@ public class QuestionServiceImpl implements QuestionService {
             questionEntity.setTitle(question.getTitle());
             questionEntity.setAuthorId(uc.getUserId());
             questionEntity.setAuthorName(uc.getUserName());
-            questionEntity.setLinkedQuestions(question.getLinkedQuestions());
+            questionEntity.setLinkedQuestions(question.getLinkedQuestions()
+                    .stream().map(x -> x.getId())
+                    .collect(Collectors.toList()));
             eventService.createQuestion(uc, questionEntity);
         } else {
             questionEntity = questionRepository.findOne(question.getId());
@@ -157,7 +162,8 @@ public class QuestionServiceImpl implements QuestionService {
             eventService.editQuestion(uc, questionEntity);
             List<String> previusLinked = questionEntity.getLinkedQuestions();
             if(previusLinked !=null ) {
-                previusLinked.removeAll(question.getLinkedQuestions());
+                previusLinked.removeAll(question.getLinkedQuestions()
+                .stream().map(x -> x.getId()).collect(Collectors.toList()));
                 final String id = questionEntity.getId();
                 previusLinked.forEach(x -> unLinkQuestion(id, x));
             }
@@ -167,10 +173,12 @@ public class QuestionServiceImpl implements QuestionService {
         questionEntity.setTags(question.getTags());
         questionEntity.setLevel(Integer.parseInt(question.getLevel().substring(1)));
         questionEntity.setBody(question.getBody());
-        questionEntity.setLinkedQuestions(question.getLinkedQuestions());
+        questionEntity.setLinkedQuestions(question.getLinkedQuestions()
+                .stream().map(x -> x.getId())
+                .collect(Collectors.toList()));
         questionEntity = questionRepository.save(questionEntity);
         question.setId(questionEntity.getId());
-        List<String> linked = question.getLinkedQuestions();
+        List<String> linked = questionEntity.getLinkedQuestions();
         if(linked != null) {
             linked.forEach(x-> linkQuestion(question.getId(), x));
         }
@@ -225,8 +233,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public  Question getQuestion(String id){
-        QuestionEntity questionEntity = questionRepository.findOne(id);
-        QuestionMapper questionMapper = new QuestionMapper();
+        QuestionEntity questionEntity = questionRepository.findOne(id);;
         return questionMapper.safeMap(questionEntity);
     }
 
@@ -258,6 +265,10 @@ public class QuestionServiceImpl implements QuestionService {
         if(questionEntity == null){
             return false;
         }
+
+        if(questionEntity.getLinkedQuestions() == null) {
+            questionEntity.setLinkedQuestions(new LinkedList<>());
+        }
         questionEntity.getLinkedQuestions().add(linkSource);
         questionRepository.save(questionEntity);
         return true;
@@ -265,7 +276,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     private void unLinkQuestion(String linkSource, String linkTarget) {
         QuestionEntity questionEntity = questionRepository.findOne(linkTarget);
-        if(questionEntity == null){
+        if(questionEntity == null || questionEntity.getLinkedQuestions() == null){
             return;
         }
         questionEntity.getLinkedQuestions().remove(linkSource);

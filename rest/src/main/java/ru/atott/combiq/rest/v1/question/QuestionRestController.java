@@ -3,7 +3,6 @@ package ru.atott.combiq.rest.v1.question;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import ru.atott.combiq.rest.bean.QuestionBean;
 import ru.atott.combiq.rest.mapper.QuestionBeanMapper;
 import ru.atott.combiq.rest.mapper.QuestionSearchBeanMapper;
 import ru.atott.combiq.rest.request.QuestionRequest;
@@ -21,6 +20,7 @@ import javax.validation.Valid;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 public class QuestionRestController extends BaseRestController {
@@ -168,7 +168,13 @@ public class QuestionRestController extends BaseRestController {
         question.setLevel(request.getLevel());
         question.setTags(request.getTags() != null ? request.getTags() : Collections.emptyList());
         question.setLastModify(new Date());
-        question.setLinkedQuestions(request.getLinkedQuestion());
+        if(request.getLinkedQuestions() != null)
+        question.setLinkedQuestions(request.getLinkedQuestions()
+        .stream().map(x -> {
+                    Question y = new Question();
+                    y.setId(x);
+                    return y;
+                }).collect(Collectors.toList()));
 
         questionService.saveQuestion(context.getUc(), question);
     }

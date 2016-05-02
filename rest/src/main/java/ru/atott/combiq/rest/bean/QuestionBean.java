@@ -1,6 +1,7 @@
 package ru.atott.combiq.rest.bean;
 
 import com.google.common.collect.Lists;
+import ru.atott.combiq.service.bean.Question;
 
 import java.util.Date;
 import java.util.List;
@@ -40,7 +41,7 @@ public class QuestionBean {
 
     private MarkdownContentBean body;
 
-    private List<String> linkedQuestions;
+    private List<QuestionBean> linkedQuestions;
 
     public String getId() {
         return id;
@@ -106,11 +107,11 @@ public class QuestionBean {
         this.body = body;
     }
 
-    public List<String> getLinkedQuestions() {
+    public List<QuestionBean> getLinkedQuestions() {
         return linkedQuestions;
     }
 
-    public void setLinkedQuestions(List<String> linkedQuestions) {
+    public void setLinkedQuestions(List<QuestionBean> linkedQuestions) {
         this.linkedQuestions = linkedQuestions;
     }
 }

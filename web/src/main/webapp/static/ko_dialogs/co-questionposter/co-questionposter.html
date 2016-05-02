@@ -41,13 +41,18 @@
     </div>
 
     <div >
-        <tbody data-bind="foreach: linked">
-          <tr><td data-bind="text: title"></td>
-          </tr>
-        </tbody>
+        <table>
+            <thead>
+                <tr><th>Связанные вопросы</th></tr>
+            </thead>
+            <tbody data-bind="foreach: linked">
+                <tr><td data-bind="text: title"></td>
+                </tr>
+            </tbody>
+        </table>
         <input data-bind="value: linkId">
         </input>
-        <button data-bind="onClick : getQuestion"> Слинковать по id</button>
+        <button data-bind="click : getQuestion"> Слинковать по id</button>
     </div>
 
     <div class="co-dialog-footer"

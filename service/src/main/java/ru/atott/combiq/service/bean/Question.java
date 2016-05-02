@@ -45,7 +45,7 @@ public class Question {
 
     private int askedCount;
 
-    private List<String> linkedQuestions;
+    private List<Question> linkedQuestions;
 
     public Date getLastModify() {
         return lastModify;
@@ -191,11 +191,11 @@ public class Question {
         this.askedCount = askedCount;
     }
 
-    public List<String> getLinkedQuestions() {
+    public List<Question> getLinkedQuestions() {
         return linkedQuestions;
     }
 
-    public void setLinkedQuestions(List<String> linkedQuestions) {
+    public void setLinkedQuestions(List<Question> linkedQuestions) {
         this.linkedQuestions = linkedQuestions;
     }
 

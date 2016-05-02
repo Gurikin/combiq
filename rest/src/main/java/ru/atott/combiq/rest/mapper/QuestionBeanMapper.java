@@ -9,6 +9,7 @@ import ru.atott.combiq.rest.utils.RestContext;
 import ru.atott.combiq.service.bean.Question;
 
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 public class QuestionBeanMapper implements BeanMapper<Question, QuestionBean> {
 
@@ -28,8 +29,16 @@ public class QuestionBeanMapper implements BeanMapper<Question, QuestionBean> {
         bean.setChangeDate(source.getLastModify());
         bean.setCommentsCount(source.getComments() != null ? source.getComments().size() : 0);
         bean.setLevel(source.getLevel());
-        bean.setLinkedQuestions(source.getLinkedQuestions());
-
+        if (source.getLinkedQuestions() !=null) {
+            bean.setLinkedQuestions(source.getLinkedQuestions()
+                    .stream().map(x -> {
+                        QuestionBean y = new QuestionBean();
+                        y.setId(x.getId());
+                        y.setUri(x.getHumanUrlTitle());
+                        y.setTitle(x.getTitle());
+                        return y;
+                    }).collect(Collectors.toList()));
+        }
         if (!MarkdownContent.isEmpty(source.getBody())) {
             bean.setBody(new MarkdownContentBean(source.getBody()));
         }

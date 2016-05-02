@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import java.util.List;
-import java.util.Set;
 
 public class QuestionRequest {
 
@@ -28,7 +27,7 @@ public class QuestionRequest {
 
     private String body;
 
-    private List<String> linkedQuestion;
+    private List<String> linkedQuestions;
 
     public String getTitle() {
         return title;
@@ -62,11 +61,11 @@ public class QuestionRequest {
         this.body = body;
     }
 
-    public List<String> getLinkedQuestion() {
-        return linkedQuestion;
+    public List<String> getLinkedQuestions() {
+        return linkedQuestions;
     }
 
-    public void setLinkedQuestion(List<String> linkedQuestion) {
-        this.linkedQuestion = linkedQuestion;
+    public void setLinkedQuestions(List<String> linkedQuestions) {
+        this.linkedQuestions = linkedQuestions;
     }
 }

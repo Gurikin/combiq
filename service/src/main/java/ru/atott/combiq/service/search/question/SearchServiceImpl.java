@@ -48,6 +48,9 @@ public class SearchServiceImpl implements SearchService {
     @Autowired
     private FavoriteQuestionService favoriteQuestionService;
 
+    @Autowired
+    private QuestionMapper questionMapper;
+
     public SearchServiceImpl() {
         SimpleElasticsearchMappingContext mappingContext = new SimpleElasticsearchMappingContext();
         defaultResultMapper = new DefaultResultMapper(mappingContext);
@@ -77,7 +80,6 @@ public class SearchServiceImpl implements SearchService {
         Pageable pageable = new PageRequest((int)Math.floor((double)context.getFrom() / (double)context.getSize()), context.getSize());
         Page<QuestionEntity> page = defaultResultMapper.mapResults(searchResponse, QuestionEntity.class, pageable);
 
-        QuestionMapper questionMapper = new QuestionMapper();
         SearchResponse response = new SearchResponse();
         response.setQuestions(page.map(questionMapper::map));
         response.setPopularTags(getPopularTags(searchResponse));
@@ -172,7 +174,7 @@ public class SearchServiceImpl implements SearchService {
     @Override
     public Question getQuestionByLegacyId(String legacyId) {
         QuestionEntity entity = questionRepository.findOneByLegacyId(legacyId);
-        return new QuestionMapper().safeMap(entity);
+        return questionMapper.safeMap(entity);
     }
 
     private List<Tag> getPopularTags(org.elasticsearch.action.search.SearchResponse response) {

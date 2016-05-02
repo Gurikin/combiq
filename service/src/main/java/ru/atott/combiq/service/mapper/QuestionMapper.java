@@ -1,16 +1,26 @@
 package ru.atott.combiq.service.mapper;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.atott.combiq.dao.entity.MarkdownContent;
 import ru.atott.combiq.dao.entity.QuestionEntity;
+import ru.atott.combiq.dao.repository.QuestionRepository;
 import ru.atott.combiq.service.bean.Question;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Service
 public class QuestionMapper implements Mapper<QuestionEntity, Question> {
 
     public QuestionMapper() { }
+
+    @Autowired
+    private QuestionRepository repository;
 
     @Override
     public Question map(QuestionEntity source) {
@@ -47,6 +57,18 @@ public class QuestionMapper implements Mapper<QuestionEntity, Question> {
         question.setHumanUrlTitle(source.getHumanUrlTitle());
         question.setStars(source.getStars());
         question.setLastModify(source.getLastModify());
+        if(source.getLinkedQuestions() != null && !source.getLinkedQuestions().isEmpty()) {
+            List<Question> linked = new LinkedList<Question>();
+            repository.findAll(source.getLinkedQuestions())
+                    .forEach(x -> {
+                        Question y = new Question();
+                        y.setHumanUrlTitle(x.getHumanUrlTitle());
+                        y.setTitle(x.getTitle());
+                        y.setId(x.getId());
+                        linked.add(y);
+                    });
+            question.setLinkedQuestions(linked);
+        }
         if (source.getAskedCount() == null) {
             question.setAskedCount(source.getAskedToday());
         } else {
