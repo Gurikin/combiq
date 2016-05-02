@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 public class QuestionBean {
 
@@ -38,6 +39,8 @@ public class QuestionBean {
     private String level;
 
     private MarkdownContentBean body;
+
+    private List<String> linkedQuestions;
 
     public String getId() {
         return id;
@@ -101,5 +104,13 @@ public class QuestionBean {
 
     public void setBody(MarkdownContentBean body) {
         this.body = body;
+    }
+
+    public List<String> getLinkedQuestions() {
+        return linkedQuestions;
+    }
+
+    public void setLinkedQuestions(List<String> linkedQuestions) {
+        this.linkedQuestions = linkedQuestions;
     }
 }

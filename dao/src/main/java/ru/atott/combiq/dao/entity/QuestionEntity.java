@@ -9,6 +9,7 @@ import ru.atott.combiq.dao.Types;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Document(indexName = "#{domainResolver.resolveQuestionIndex()}", type = Types.question)
 public class QuestionEntity {
@@ -50,6 +51,8 @@ public class QuestionEntity {
     private Integer askedCount;
 
     private int askedToday;
+
+    private List<String> linkedQuestions;
 
     public Date getLastModify() {
         return lastModify;
@@ -217,5 +220,13 @@ public class QuestionEntity {
 
     public void setAskedToday(int askedToday) {
         this.askedToday = askedToday;
+    }
+
+    public void setLinkedQuestions(List<String> linkedQuestions) {
+        this.linkedQuestions = linkedQuestions;
+    }
+
+    public List<String> getLinkedQuestions() {
+        return linkedQuestions;
     }
 }

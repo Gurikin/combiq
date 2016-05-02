@@ -21,6 +21,8 @@ define([
         this.selectedTags = ko.wrap([]);
         this.tagsElement = ko.wrap();
         this.availableTags = ko.wrap([]);
+        this.linked = ko.wrap([{title:"Связанные вопросы"}]);
+        this.linkId = ko.wrap("");
 
         if (this.id()) {
             var url = coUtils.getRestUrl('/rest/v1/question/{questionId}', {
@@ -34,6 +36,12 @@ define([
                     self.title(question.title);
                     self.body(question.body && question.body.markdown);
                     self.selectedTags(question.tags || []);
+                    var link = question.linkedQuestions || [];
+                    link.forEach( function(id) {
+                        ajax.rest('GET', '/rest/v1/question/' + id)
+                                 .done(function(question) {
+                                    self.linked().push(question);
+                                 });});
                 });
         }
     }
@@ -77,11 +85,18 @@ define([
             ? coUtils.getRestUrl('/rest/v1/question/{questionId}', {questionId: this.id()})
             : '/rest/v1/question';
 
+        var linkedQuestions = [];
+        this.linked().foreach(function(question) {
+            if (question.id != null) {
+                linkedQuestions.push(question.id);
+            };
+        });
         var json = {
             title: this.title(),
             body: this.body(),
             level: this.level(),
-            tags: this.selectedTags()
+            tags: this.selectedTags(),
+            linkedQuestions: linkedQuestions
         };
 
         ajax
@@ -95,5 +110,15 @@ define([
             });
     };
 
+    ViewModel.prototype.getQuestion = function() {
+        var self = this;
+        var url = coUtils.getRestUrl('/rest/v1/question/{questionId}', {
+                        questionId: this.linkId()
+        });
+        ajax.rest('GET', url)
+             .done(function(question) {
+                self.linked().push(question);
+             });
+    };
     return ViewModel;
 });

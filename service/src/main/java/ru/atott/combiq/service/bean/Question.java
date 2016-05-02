@@ -7,6 +7,7 @@ import ru.atott.combiq.dao.entity.QuestionComment;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 public class Question {
 
@@ -43,6 +44,8 @@ public class Question {
     private Date lastModify;
 
     private int askedCount;
+
+    private List<String> linkedQuestions;
 
     public Date getLastModify() {
         return lastModify;
@@ -188,6 +191,14 @@ public class Question {
         this.askedCount = askedCount;
     }
 
+    public List<String> getLinkedQuestions() {
+        return linkedQuestions;
+    }
+
+    public void setLinkedQuestions(List<String> linkedQuestions) {
+        this.linkedQuestions = linkedQuestions;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
@@ -208,6 +219,7 @@ public class Question {
                 .append("stars", stars)
                 .append("lastModify", lastModify)
                 .append("askedCount", askedCount)
+                .append("linkedQuestions", linkedQuestions)
                 .toString();
     }
 }

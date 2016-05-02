@@ -148,20 +148,32 @@ public class QuestionServiceImpl implements QuestionService {
             questionEntity.setTitle(question.getTitle());
             questionEntity.setAuthorId(uc.getUserId());
             questionEntity.setAuthorName(uc.getUserName());
+            questionEntity.setLinkedQuestions(question.getLinkedQuestions());
             eventService.createQuestion(uc, questionEntity);
         } else {
             questionEntity = questionRepository.findOne(question.getId());
             questionEntity.setClassNames(null);
             questionEntity.setTitle(question.getTitle());
             eventService.editQuestion(uc, questionEntity);
+            List<String> previusLinked = questionEntity.getLinkedQuestions();
+            if(previusLinked !=null ) {
+                previusLinked.removeAll(question.getLinkedQuestions());
+                final String id = questionEntity.getId();
+                previusLinked.forEach(x -> unLinkQuestion(id, x));
+            }
         }
         questionEntity.setLastModify(question.getLastModify());
         questionEntity.setHumanUrlTitle(transletirateService.lowercaseAndTransletirate(question.getTitle(), 80));
         questionEntity.setTags(question.getTags());
         questionEntity.setLevel(Integer.parseInt(question.getLevel().substring(1)));
         questionEntity.setBody(question.getBody());
+        questionEntity.setLinkedQuestions(question.getLinkedQuestions());
         questionEntity = questionRepository.save(questionEntity);
         question.setId(questionEntity.getId());
+        List<String> linked = question.getLinkedQuestions();
+        if(linked != null) {
+            linked.forEach(x-> linkQuestion(question.getId(), x));
+        }
     }
 
     @Override
@@ -238,6 +250,25 @@ public class QuestionServiceImpl implements QuestionService {
                 })
                 .collect(Collectors.toList());
         questionEntity.setComments(comments);
+        questionRepository.save(questionEntity);
+    }
+
+    private boolean linkQuestion(String linkSource, String linkTarget) {
+        QuestionEntity questionEntity = questionRepository.findOne(linkTarget);
+        if(questionEntity == null){
+            return false;
+        }
+        questionEntity.getLinkedQuestions().add(linkSource);
+        questionRepository.save(questionEntity);
+        return true;
+    }
+
+    private void unLinkQuestion(String linkSource, String linkTarget) {
+        QuestionEntity questionEntity = questionRepository.findOne(linkTarget);
+        if(questionEntity == null){
+            return;
+        }
+        questionEntity.getLinkedQuestions().remove(linkSource);
         questionRepository.save(questionEntity);
     }
 }

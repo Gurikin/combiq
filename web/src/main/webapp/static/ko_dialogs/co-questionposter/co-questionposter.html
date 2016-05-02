@@ -40,6 +40,16 @@
         </div>
     </div>
 
+    <div >
+        <tbody data-bind="foreach: linked">
+          <tr><td data-bind="text: title"></td>
+          </tr>
+        </tbody>
+        <input data-bind="value: linkId">
+        </input>
+        <button data-bind="onClick : getQuestion"> Слинковать по id</button>
+    </div>
+
     <div class="co-dialog-footer"
          data-bind="css: {'co-questionposter-footer-done': saved}">
         <input type="button"

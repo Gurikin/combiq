@@ -168,6 +168,7 @@ public class QuestionRestController extends BaseRestController {
         question.setLevel(request.getLevel());
         question.setTags(request.getTags() != null ? request.getTags() : Collections.emptyList());
         question.setLastModify(new Date());
+        question.setLinkedQuestions(request.getLinkedQuestion());
 
         questionService.saveQuestion(context.getUc(), question);
     }
