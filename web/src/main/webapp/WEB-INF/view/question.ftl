@@ -214,16 +214,9 @@
             <@questionPosition />
         </div>
     </div>
- <#if question.linkedQuestions?? >
-    <div>
-      <h4> Связанные вопросы </h4>
-      <#list question.linkedQuestions as questions>
-      <div>
-      <a href="${questions.humanUrlTitle}"> ${questions.title} </a>
-      </div>
-      </#list>
-    </div>
- </#if>
+    <#if linkedQuestions?? >
+    <@linkedOuestions linked=linkedQuestions/>
+    </#if>
     <div>
         <#if functions.hasRoleSaOrContenter()>
             <a  href="#" onclick="ko.openDialog('co-questionposter',{id: '${question.id?js_string}'}); return false;">
@@ -371,13 +364,15 @@
     </div>
     </div>
 </#macro>
-<#macro LinkedOuestions linked>
-    <#if linked??>
-    <div>
-      <h4> Связанные вопросы </h4>
-      <#list linked as question>
-      <a href="${"/question/"+question.uri}"> ${question.title} </a>
-      </#list>
-    </div>
-    </#if>
+<#macro linkedOuestions linked>
+        <div>
+          <h4> Связанные вопросы </h4>
+          <#list linked as questions>
+              <div>
+                  <a href="${questions.humanUrlTitle}"> ${questions.title} </a>
+              </div>
+          </#list>
+          <div>
+          </div>
+        </div>
 </#macro>

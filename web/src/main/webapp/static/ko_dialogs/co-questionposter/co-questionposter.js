@@ -21,7 +21,10 @@ define([
         this.selectedTags = ko.wrap([]);
         this.tagsElement = ko.wrap();
         this.availableTags = ko.wrap([]);
-        this.linked = ko.wrap([]);
+        this.linked = ko.observableArray([]);
+        this.removeLink = function(link) {
+             self.linked.remove(link);
+        };
         this.linkId = ko.wrap("");
 
         if (this.id()) {
@@ -36,7 +39,13 @@ define([
                     self.title(question.title);
                     self.body(question.body && question.body.markdown);
                     self.selectedTags(question.tags || []);
-                    self.linked(question.linkedQuestions || [])
+                    question.linkedQuestions.forEach(function(id) {
+                        ajax
+                            .rest('GET', '/rest/v1/question/'+id)
+                            .done(function(question) {
+                                self.linked.push(question);
+                            })
+                    })
                 });
         }
     }
@@ -115,5 +124,6 @@ define([
                 self.linked.push(question);
              });
     };
+
     return ViewModel;
 });

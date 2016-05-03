@@ -9,6 +9,7 @@ import ru.atott.combiq.service.search.question.QuestionPositionInDsl;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class QuestionViewBuilder {
@@ -21,6 +22,7 @@ public class QuestionViewBuilder {
     private List<LatestComment> questionsWithLatestComments;
     private boolean favorite;
     private boolean asked;
+    private Set<Question> linkedQuestions;
 
     public String getDsl() {
         return dsl;
@@ -78,6 +80,14 @@ public class QuestionViewBuilder {
         this.questionsWithLatestComments = questionsWithLatestComments;
     }
 
+    public Set<Question> getLinkedQuestions() {
+        return linkedQuestions;
+    }
+
+    public void setLinkedQuestions(Set<Question> linkedQuestions) {
+        this.linkedQuestions = linkedQuestions;
+    }
+
     public boolean isAsked() {
         return asked;
     }
@@ -115,6 +125,7 @@ public class QuestionViewBuilder {
         mav.addObject("questionsWithLatestComments", questionsWithLatestComments);
         mav.addObject("favorite", favorite);
         mav.addObject("asked", asked);
+        mav.addObject("linkedQuestions", linkedQuestions);
         return mav;
     }
 }

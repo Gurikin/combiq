@@ -4,6 +4,7 @@ import ru.atott.combiq.service.bean.Question;
 import ru.atott.combiq.service.site.UserContext;
 
 import java.util.List;
+import java.util.Set;
 
 public interface QuestionService {
 
@@ -20,6 +21,8 @@ public interface QuestionService {
     void deleteQuestion(UserContext uc, String questionId);
 
     void restoreQuestion(UserContext uc, String questionId);
+
+    Set<Question> getLinkedQuestion(UserContext uc, Set<String> id);
 
     Question getQuestion(String id);
 

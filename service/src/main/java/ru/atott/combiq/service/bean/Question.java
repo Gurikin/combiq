@@ -45,7 +45,7 @@ public class Question {
 
     private int askedCount;
 
-    private Set<Question> linkedQuestions;
+    private Set<String> linkedQuestions;
 
     public Date getLastModify() {
         return lastModify;
@@ -191,11 +191,11 @@ public class Question {
         this.askedCount = askedCount;
     }
 
-    public Set<Question> getLinkedQuestions() {
+    public Set<String> getLinkedQuestions() {
         return linkedQuestions;
     }
 
-    public void setLinkedQuestions(Set<Question> linkedQuestions) {
+    public void setLinkedQuestions(Set<String> linkedQuestions) {
         this.linkedQuestions = linkedQuestions;
     }
 

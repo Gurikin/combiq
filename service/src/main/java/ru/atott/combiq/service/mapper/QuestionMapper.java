@@ -11,13 +11,9 @@ import ru.atott.combiq.service.bean.Question;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Service
 public class QuestionMapper implements Mapper<QuestionEntity, Question> {
 
     public QuestionMapper() { }
-
-    @Autowired
-    private QuestionRepository repository;
 
     @Override
     public Question map(QuestionEntity source) {
@@ -54,18 +50,7 @@ public class QuestionMapper implements Mapper<QuestionEntity, Question> {
         question.setHumanUrlTitle(source.getHumanUrlTitle());
         question.setStars(source.getStars());
         question.setLastModify(source.getLastModify());
-        if(source.getLinkedQuestions() != null && !source.getLinkedQuestions().isEmpty()) {
-            Set<Question> linked = new HashSet<>();
-            repository.findAll(source.getLinkedQuestions())
-                    .forEach(x -> {
-                        Question y = new Question();
-                        y.setHumanUrlTitle(x.getHumanUrlTitle());
-                        y.setTitle(x.getTitle());
-                        y.setId(x.getId());
-                        linked.add(y);
-                    });
-            question.setLinkedQuestions(linked);
-        }
+        question.setLinkedQuestions(source.getLinkedQuestions());
         if (source.getAskedCount() == null) {
             question.setAskedCount(source.getAskedToday());
         } else {
