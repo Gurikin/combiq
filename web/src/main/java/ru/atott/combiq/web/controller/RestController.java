@@ -7,6 +7,7 @@ import org.springframework.web.servlet.ModelAndView;
 import ru.atott.combiq.rest.doc.RestDocumentIndex;
 import ru.atott.combiq.rest.v1.MarkdownRestController;
 import ru.atott.combiq.rest.v1.TagRestController;
+import ru.atott.combiq.rest.v1.post.PostRestController;
 import ru.atott.combiq.rest.v1.question.CommentRestController;
 import ru.atott.combiq.rest.v1.question.QuestionRestController;
 
@@ -23,7 +24,8 @@ public class RestController extends BaseController {
             Lists.newArrayList(
                     QuestionRestController.class,
                     CommentRestController.class
-            )
+            ),
+            Collections.singletonList(PostRestController.class)
     );
 
     private volatile RestDocumentIndex documentIndex;

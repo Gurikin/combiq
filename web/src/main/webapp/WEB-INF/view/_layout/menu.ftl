@@ -18,6 +18,11 @@
                             <li class="${functions.if(chapter == 'interview', 'active')}">
                                 <a href="/interview">Собеседование</a>
                             </li>
+                            <#if options.postsInProduction>
+                            <li class="${functions.if(chapter == 'posts', 'active')}">
+                                <a href="/posts">Статьи</a>
+                            </li>
+                            </#if>
                             <li class="${functions.if(chapter == 'job', 'active')}">
                                 <a href="/job">Работа</a>
                             </li>

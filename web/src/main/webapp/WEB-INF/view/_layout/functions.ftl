@@ -8,6 +8,10 @@
     </#if>
 </#function>
 
+<#function checkedIf condition>
+    <#return if(condition, 'checked="checked"', '')>
+</#function>
+
 <#function hasRole roleName>
     <@security.authorize access="hasRole('" + roleName + "')">
         <#return true>

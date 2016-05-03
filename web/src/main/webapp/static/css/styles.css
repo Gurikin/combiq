@@ -301,6 +301,17 @@ footer a:hover {
     border-bottom: 1px solid #e0e0e0;
 }
 
+.co-posts {
+    padding: 0;
+    list-style: none;
+    margin: 0 0 30px;
+}
+
+.co-posts > li {
+    margin: 0;
+    padding: 12px 0 15px 0;
+}
+
 ul.co-popularTags {
     list-style: none;
     margin: 0;

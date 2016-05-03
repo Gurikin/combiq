@@ -8,6 +8,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.view.RedirectView;
 import ru.atott.combiq.service.search.comment.LatestCommentSearchService;
+import ru.atott.combiq.service.site.OptionsService;
 import ru.atott.combiq.service.site.RequestUrlResolver;
 import ru.atott.combiq.service.site.UrlResolver;
 import ru.atott.combiq.service.user.UserService;
@@ -71,6 +72,9 @@ public class CommonViewAttributesInjector extends HandlerInterceptorAdapter {
     private boolean facebookEnable;
 
     @Autowired
+    private OptionsService optionsService;
+
+    @Autowired
     private InstantMessageHolder instantMessageHolder;
 
     @Autowired
@@ -128,6 +132,7 @@ public class CommonViewAttributesInjector extends HandlerInterceptorAdapter {
             modelAndView.addObject("stackexchangeEnable", stackexchangeEnable);
             modelAndView.addObject("facebookEnable", facebookEnable);
             modelAndView.addObject("latestCommentFeed", latestCommentSearchService.get5LatestComments());
+            modelAndView.addObject("options", optionsService.getCachedOptions());
 
             modelAndView.addObject(INJECTED, true);
         }

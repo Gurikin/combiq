@@ -5,7 +5,16 @@
     </div>
 
     <div class="form-group">
-        <label >Текст статьи:</label>
+        <label>Превью статьи:</label>
+        <co-markdownbox params="
+            active: 'markdown',
+            text: preview">
+
+        </co-markdownbox>
+    </div>
+
+    <div class="form-group">
+        <label>Текст статьи:</label>
         <co-markdownbox params="
             active: 'markdown',
             text: content">
@@ -19,5 +28,5 @@
         </label>
     </div>
 
-    <button data-bind="click: save" type="button" class="btn">Сохранить</button>
+    <button data-bind="click: save" type="button" class="btn btn-primary">Сохранить</button>
 </div>
