@@ -85,6 +85,7 @@ public class QuestionRestController extends BaseRestController {
      *      В случае если вопрос не найден.
      */
     @RequestMapping(value = "/rest/v1/question/{questionId}", method = RequestMethod.GET)
+    @ResponseBody
     public Object get(
             @PathVariable("questionId") String questionId) {
 

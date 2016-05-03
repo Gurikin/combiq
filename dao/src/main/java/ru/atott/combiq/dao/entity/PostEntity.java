@@ -2,6 +2,9 @@ package ru.atott.combiq.dao.entity;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldIndex;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import ru.atott.combiq.dao.Types;
 
 import java.util.Date;
@@ -25,6 +28,11 @@ public class PostEntity {
     private String title;
 
     private MarkdownContent content;
+
+    private MarkdownContent preview;
+
+    @Field(index = FieldIndex.not_analyzed, type = FieldType.String)
+    private String humanUrlTitle;
 
     public String getId() {
         return id;
@@ -80,5 +88,21 @@ public class PostEntity {
 
     public void setContent(MarkdownContent content) {
         this.content = content;
+    }
+
+    public MarkdownContent getPreview() {
+        return preview;
+    }
+
+    public void setPreview(MarkdownContent preview) {
+        this.preview = preview;
+    }
+
+    public String getHumanUrlTitle() {
+        return humanUrlTitle;
+    }
+
+    public void setHumanUrlTitle(String humanUrlTitle) {
+        this.humanUrlTitle = humanUrlTitle;
     }
 }

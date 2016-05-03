@@ -38,6 +38,10 @@ public class BaseController {
         return redirectView;
     }
 
+    protected RedirectView redirect(String url) {
+        return new RedirectView(url);
+    }
+
     protected ModelAndView notFound() {
         HttpServletRequest httpRequest = RequestHolderFilter.REQUEST.get();
         ModelAndView modelAndView = new ModelAndView("error/404");

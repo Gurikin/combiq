@@ -1,6 +1,7 @@
 package ru.atott.combiq.service.site;
 
 import org.apache.commons.lang3.StringUtils;
+import ru.atott.combiq.service.bean.Post;
 import ru.atott.combiq.service.bean.Question;
 import ru.atott.combiq.service.bean.QuestionnaireHead;
 
@@ -21,6 +22,10 @@ public interface UrlResolver {
     String getQuestionnaireUrl(QuestionnaireHead questionnaire);
 
     String getQuestionnaireUrl(QuestionnaireHead questionnaire, String queryString);
+
+    String getPostUrl(Post post);
+
+    String getPostUrl(String postId, String postHumanUrlTitle);
 
     String getUserUrl(String userId);
 

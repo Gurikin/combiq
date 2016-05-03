@@ -5,10 +5,12 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 import ru.atott.combiq.dao.Types;
+import ru.atott.combiq.dao.entity.PostEntity;
 import ru.atott.combiq.dao.entity.QuestionEntity;
 import ru.atott.combiq.dao.es.NameVersionDomainResolver;
 import ru.atott.combiq.dao.repository.QuestionnaireRepository;
@@ -85,6 +87,26 @@ public class SitemapServiceImpl implements SitemapService {
         List<QuestionnaireHead> questionnaireHeads = questionnaireHeadMapper.toList(questionnaireRepository.findAll());
         questionnaireHeads.forEach(questionnaireHead -> writeQuestionnaire(writer, questionnaireHead, urlResolver));
 
+        // Posts.
+        searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(QueryBuilders.matchAllQuery())
+                .withIndices(domainResolver.resolveQuestionIndex())
+                .withTypes(Types.post)
+                .build();
+
+        scrollId = elasticsearchOperations.scan(searchQuery, TimeUnit.MINUTES.toMillis(1), false);
+        hasRecords = true;
+
+        while (hasRecords){
+            Page<PostEntity> page = elasticsearchOperations.scroll(scrollId, TimeUnit.SECONDS.toMillis(10), PostEntity.class);
+
+            if (page != null && page.hasContent()) {
+                page.getContent().stream().forEach(entity -> writePost(writer, entity, urlResolver));
+            } else {
+                hasRecords = false;
+            }
+        }
+
         writer.writeEndElement();
     }
 
@@ -113,6 +135,23 @@ public class SitemapServiceImpl implements SitemapService {
             writeTextElement(writer, "priority", priority);
 
 
+            writer.writeEndElement();
+        } catch (Exception e) {
+            throw new ServiceException(e.getMessage(), e);
+        }
+    }
+
+    private void writePost(XMLStreamWriter writer, PostEntity postEntity, UrlResolver urlResolver) {
+        try {
+            if (!postEntity.isPublished()) {
+                return;
+            }
+
+            writer.writeStartElement("url");
+
+            String postUrl = urlResolver.getPostUrl(postEntity.getId(), postEntity.getHumanUrlTitle());
+            writeTextElement(writer, "loc", urlResolver.externalize(postUrl));
+            writeTextElement(writer, "priority", "0.7");
             writer.writeEndElement();
         } catch (Exception e) {
             throw new ServiceException(e.getMessage(), e);

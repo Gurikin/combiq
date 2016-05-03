@@ -12,6 +12,8 @@ public class OptionsEntity {
 
     private Long lastNumber;
 
+    private boolean postsInProduction;
+
     public String getId() {
         return id;
     }
@@ -26,5 +28,13 @@ public class OptionsEntity {
 
     public void setLastNumber(Long lastNumber) {
         this.lastNumber = lastNumber;
+    }
+
+    public boolean isPostsInProduction() {
+        return postsInProduction;
+    }
+
+    public void setPostsInProduction(boolean postsInProduction) {
+        this.postsInProduction = postsInProduction;
     }
 }

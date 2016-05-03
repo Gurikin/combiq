@@ -10,6 +10,14 @@
     </li>
 
     <#if functions.hasRole('sa')>
+        <li role="presentation" class="${templates.if(activeMenuItem == 'options', 'active')}">
+            <a href="/admin/options">
+                <span>Настройки</span>
+            </a>
+        </li>
+    </#if>
+
+    <#if functions.hasRole('sa')>
     <li role="presentation" class="${templates.if(activeMenuItem == 'users', 'active')}">
         <a href="/admin/users">
             <span>Пользователи</span>

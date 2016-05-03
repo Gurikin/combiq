@@ -20,6 +20,10 @@ public class Post {
 
     private MarkdownContent content;
 
+    private MarkdownContent preview;
+
+    private String humanUrlTitle;
+
     public String getId() {
         return id;
     }
@@ -74,5 +78,21 @@ public class Post {
 
     public void setContent(MarkdownContent content) {
         this.content = content;
+    }
+
+    public MarkdownContent getPreview() {
+        return preview;
+    }
+
+    public void setPreview(MarkdownContent preview) {
+        this.preview = preview;
+    }
+
+    public String getHumanUrlTitle() {
+        return humanUrlTitle;
+    }
+
+    public void setHumanUrlTitle(String humanUrlTitle) {
+        this.humanUrlTitle = humanUrlTitle;
     }
 }
