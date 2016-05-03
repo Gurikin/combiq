@@ -37,7 +37,7 @@ public class QuestionBeanMapper implements BeanMapper<Question, QuestionBean> {
                         y.setUri(x.getHumanUrlTitle());
                         y.setTitle(x.getTitle());
                         return y;
-                    }).collect(Collectors.toList()));
+                    }).collect(Collectors.toSet()));
         }
         if (!MarkdownContent.isEmpty(source.getBody())) {
             bean.setBody(new MarkdownContentBean(source.getBody()));

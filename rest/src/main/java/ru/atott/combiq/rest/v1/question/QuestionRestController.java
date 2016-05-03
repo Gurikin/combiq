@@ -174,7 +174,7 @@ public class QuestionRestController extends BaseRestController {
                     Question y = new Question();
                     y.setId(x);
                     return y;
-                }).collect(Collectors.toList()));
+                }).collect(Collectors.toSet()));
 
         questionService.saveQuestion(context.getUc(), question);
     }

@@ -52,7 +52,7 @@ public class QuestionEntity {
 
     private int askedToday;
 
-    private List<String> linkedQuestions;
+    private Set<String> linkedQuestions;
 
     public Date getLastModify() {
         return lastModify;
@@ -222,11 +222,11 @@ public class QuestionEntity {
         this.askedToday = askedToday;
     }
 
-    public void setLinkedQuestions(List<String> linkedQuestions) {
+    public void setLinkedQuestions(Set<String> linkedQuestions) {
         this.linkedQuestions = linkedQuestions;
     }
 
-    public List<String> getLinkedQuestions() {
+    public Set<String> getLinkedQuestions() {
         return linkedQuestions;
     }
 }

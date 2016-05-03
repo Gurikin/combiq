@@ -153,14 +153,14 @@ public class QuestionServiceImpl implements QuestionService {
             questionEntity.setAuthorName(uc.getUserName());
             questionEntity.setLinkedQuestions(question.getLinkedQuestions()
                     .stream().map(x -> x.getId())
-                    .collect(Collectors.toList()));
+                    .collect(Collectors.toSet()));
             eventService.createQuestion(uc, questionEntity);
         } else {
             questionEntity = questionRepository.findOne(question.getId());
             questionEntity.setClassNames(null);
             questionEntity.setTitle(question.getTitle());
             eventService.editQuestion(uc, questionEntity);
-            List<String> previusLinked = questionEntity.getLinkedQuestions();
+            Set<String> previusLinked = questionEntity.getLinkedQuestions();
             if(previusLinked !=null ) {
                 previusLinked.removeAll(question.getLinkedQuestions()
                 .stream().map(x -> x.getId()).collect(Collectors.toList()));
@@ -175,10 +175,10 @@ public class QuestionServiceImpl implements QuestionService {
         questionEntity.setBody(question.getBody());
         questionEntity.setLinkedQuestions(question.getLinkedQuestions()
                 .stream().map(x -> x.getId())
-                .collect(Collectors.toList()));
+                .collect(Collectors.toSet()));
         questionEntity = questionRepository.save(questionEntity);
         question.setId(questionEntity.getId());
-        List<String> linked = questionEntity.getLinkedQuestions();
+        Set<String> linked = questionEntity.getLinkedQuestions();
         if(linked != null) {
             linked.forEach(x-> linkQuestion(question.getId(), x));
         }
@@ -267,7 +267,7 @@ public class QuestionServiceImpl implements QuestionService {
         }
 
         if(questionEntity.getLinkedQuestions() == null) {
-            questionEntity.setLinkedQuestions(new LinkedList<>());
+            questionEntity.setLinkedQuestions(new HashSet<>());
         }
         questionEntity.getLinkedQuestions().add(linkSource);
         questionRepository.save(questionEntity);

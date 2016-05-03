@@ -119,16 +119,7 @@ public class CommentRestController extends BaseRestController {
     public Object getComments(@PathVariable("questionId") String questionId) {
         List<QuestionComment> comments = questionService.getQuestion(questionId).getComments();
         CommentBeanMapper mapper = new CommentBeanMapper();
-        List<CommentBean> bean = mapper.toList(getContext(), comments);
-        Map<String, String> userMap = new HashMap<>();
-        Iterator<UserEntity> iterator
-                = (Iterator<UserEntity>) userRepository.findAll(comments.stream()
-                .map(x -> x.getUserId()).distinct().collect(Collectors.toList()));
-        iterator.forEachRemaining(x -> userMap.put(x.getId(), x.getAvatarUrl()));
-        bean.iterator()
-                .forEachRemaining(x -> x.getAuthor()
-                        .setAvatarUrl(userMap.get(x.getAuthor().getId())));
-        return bean;
+        return mapper.toList(getContext(), comments);
     }
 
     /**

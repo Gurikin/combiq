@@ -41,7 +41,7 @@ public class QuestionBean {
 
     private MarkdownContentBean body;
 
-    private List<QuestionBean> linkedQuestions;
+    private Set<QuestionBean> linkedQuestions;
 
     public String getId() {
         return id;
@@ -107,11 +107,11 @@ public class QuestionBean {
         this.body = body;
     }
 
-    public List<QuestionBean> getLinkedQuestions() {
+    public Set<QuestionBean> getLinkedQuestions() {
         return linkedQuestions;
     }
 
-    public void setLinkedQuestions(List<QuestionBean> linkedQuestions) {
+    public void setLinkedQuestions(Set<QuestionBean> linkedQuestions) {
         this.linkedQuestions = linkedQuestions;
     }
 }

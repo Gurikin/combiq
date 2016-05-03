@@ -8,10 +8,7 @@ import ru.atott.combiq.dao.entity.QuestionEntity;
 import ru.atott.combiq.dao.repository.QuestionRepository;
 import ru.atott.combiq.service.bean.Question;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -58,7 +55,7 @@ public class QuestionMapper implements Mapper<QuestionEntity, Question> {
         question.setStars(source.getStars());
         question.setLastModify(source.getLastModify());
         if(source.getLinkedQuestions() != null && !source.getLinkedQuestions().isEmpty()) {
-            List<Question> linked = new LinkedList<Question>();
+            Set<Question> linked = new HashSet<>();
             repository.findAll(source.getLinkedQuestions())
                     .forEach(x -> {
                         Question y = new Question();

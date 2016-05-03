@@ -22,10 +22,11 @@ public class UserBean {
 
     public UserBean() { }
 
-    public UserBean(String id, String name, String uri) {
+    public UserBean(String id, String name, String uri, String avatarUrl) {
         this.id = id;
         this.name = name;
         this.uri = uri;
+        this.avatarUrl = avatarUrl;
     }
 
     public String getId() {
