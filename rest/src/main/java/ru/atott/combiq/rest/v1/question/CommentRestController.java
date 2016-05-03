@@ -4,18 +4,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.atott.combiq.dao.entity.QuestionComment;
+import ru.atott.combiq.dao.entity.UserEntity;
+import ru.atott.combiq.dao.repository.UserRepository;
+import ru.atott.combiq.rest.bean.CommentBean;
 import ru.atott.combiq.rest.mapper.CommentBeanMapper;
 import ru.atott.combiq.rest.request.CommentRequest;
 import ru.atott.combiq.rest.v1.BaseRestController;
 import ru.atott.combiq.service.question.QuestionService;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 public class CommentRestController extends BaseRestController {
 
     @Autowired
     private QuestionService questionService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     /**
      * Создать комментарий к вопросу.
@@ -109,7 +119,16 @@ public class CommentRestController extends BaseRestController {
     public Object getComments(@PathVariable("questionId") String questionId) {
         List<QuestionComment> comments = questionService.getQuestion(questionId).getComments();
         CommentBeanMapper mapper = new CommentBeanMapper();
-        return mapper.toList(getContext(), comments);
+        List<CommentBean> bean = mapper.toList(getContext(), comments);
+        Map<String, String> userMap = new HashMap<>();
+        Iterator<UserEntity> iterator
+                = (Iterator<UserEntity>) userRepository.findAll(comments.stream()
+                .map(x -> x.getUserId()).distinct().collect(Collectors.toList()));
+        iterator.forEachRemaining(x -> userMap.put(x.getId(), x.getAvatarUrl()));
+        bean.iterator()
+                .forEachRemaining(x -> x.getAuthor()
+                        .setAvatarUrl(userMap.get(x.getAuthor().getId())));
+        return bean;
     }
 
     /**

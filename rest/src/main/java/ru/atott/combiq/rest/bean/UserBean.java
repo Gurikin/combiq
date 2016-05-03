@@ -9,6 +9,7 @@ public class UserBean {
         EXAMPLE.setId("AU1d7i-CE29pBsA_iQt8");
         EXAMPLE.setName("User Name");
         EXAMPLE.setUri("http://combiq.ru/users/AU1d7i-CE29pBsA_iQt8");
+        EXAMPLE.setAvatarUrl("http://combiq.ru/static/images/site/OpenSource.png");
     }
 
     private String id;
@@ -16,6 +17,8 @@ public class UserBean {
     private String name;
 
     private String uri;
+
+    private String avatarUrl;
 
     public UserBean() { }
 
@@ -47,5 +50,13 @@ public class UserBean {
 
     public void setUri(String uri) {
         this.uri = uri;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 }
