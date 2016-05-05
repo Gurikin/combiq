@@ -215,11 +215,9 @@
         </div>
     </div>
 
-    <@linkedOuestions linked=linkedQuestions/>
-
-    <div>
-        <#if functions.hasRoleSaOrContenter()>
-            <a  href="#" onclick="ko.openDialog('co-questionposter',{id: '${question.id?js_string}'}); return false;">
+    <#if functions.hasRoleSaOrContenter()>
+        <div class="co-question-staff-container">
+            <a href="#" onclick="ko.openDialog('co-questionposter',{id: '${question.id?js_string}'}); return false;">
                 Изменить вопрос
             </a>
             <#if question.lastModify??>
@@ -236,8 +234,10 @@
                    onclick="$.post('/questions/${question.id}/delete');
                            window.location.replace('/questions/search');">Удалить Вопрос</a>
             </#if>
-        </#if>
-    </div>
+        </div>
+    </#if>
+
+    <@linkedOuestions linked=linkedQuestions/>
 </#macro>
 
 <#macro questionPosition>
@@ -367,8 +367,8 @@
 
 <#macro linkedOuestions linked>
     <#if linked?size != 0>
-        <div>
-            <h4>Связанные вопросы</h4>
+        <div class="co-question-staff-container">
+            <h4 id="linkedQuestions">Связанные вопросы</h4>
             <ul>
                 <#list linked as question>
                     <li>
