@@ -9,7 +9,7 @@ public class UserBean {
         EXAMPLE.setId("AU1d7i-CE29pBsA_iQt8");
         EXAMPLE.setName("User Name");
         EXAMPLE.setUri("http://combiq.ru/users/AU1d7i-CE29pBsA_iQt8");
-        EXAMPLE.setAvatarUrl("http://combiq.ru/static/images/site/OpenSource.png");
+        EXAMPLE.setAvatarUri("http://combiq.ru/static/images/site/avatar.png");
     }
 
     private String id;
@@ -18,15 +18,15 @@ public class UserBean {
 
     private String uri;
 
-    private String avatarUrl;
+    private String avatarUri;
 
     public UserBean() { }
 
-    public UserBean(String id, String name, String uri, String avatarUrl) {
+    public UserBean(String id, String name, String uri, String avatarUri) {
         this.id = id;
         this.name = name;
         this.uri = uri;
-        this.avatarUrl = avatarUrl;
+        this.avatarUri = avatarUri;
     }
 
     public String getId() {
@@ -53,11 +53,11 @@ public class UserBean {
         this.uri = uri;
     }
 
-    public String getAvatarUrl() {
-        return avatarUrl;
+    public String getAvatarUri() {
+        return avatarUri;
     }
 
-    public void setAvatarUrl(String avatarUrl) {
-        this.avatarUrl = avatarUrl;
+    public void setAvatarUri(String avatarUri) {
+        this.avatarUri = avatarUri;
     }
 }

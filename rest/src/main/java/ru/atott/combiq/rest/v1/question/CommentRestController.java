@@ -4,28 +4,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.atott.combiq.dao.entity.QuestionComment;
-import ru.atott.combiq.dao.entity.UserEntity;
-import ru.atott.combiq.dao.repository.UserRepository;
-import ru.atott.combiq.rest.bean.CommentBean;
 import ru.atott.combiq.rest.mapper.CommentBeanMapper;
 import ru.atott.combiq.rest.request.CommentRequest;
 import ru.atott.combiq.rest.v1.BaseRestController;
 import ru.atott.combiq.service.question.QuestionService;
 
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 public class CommentRestController extends BaseRestController {
 
     @Autowired
     private QuestionService questionService;
-
-    @Autowired
-    private UserRepository userRepository;
 
     /**
      * Создать комментарий к вопросу.

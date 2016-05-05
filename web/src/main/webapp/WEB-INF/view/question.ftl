@@ -214,9 +214,9 @@
             <@questionPosition />
         </div>
     </div>
-    <#if linkedQuestions?? >
+
     <@linkedOuestions linked=linkedQuestions/>
-    </#if>
+
     <div>
         <#if functions.hasRoleSaOrContenter()>
             <a  href="#" onclick="ko.openDialog('co-questionposter',{id: '${question.id?js_string}'}); return false;">
@@ -364,15 +364,18 @@
     </div>
     </div>
 </#macro>
+
 <#macro linkedOuestions linked>
+    <#if linked?size != 0>
         <div>
-          <h4> Связанные вопросы </h4>
-          <#list linked as questions>
-              <div>
-                  <a href="${questions.humanUrlTitle}"> ${questions.title} </a>
-              </div>
-          </#list>
-          <div>
-          </div>
+            <h4>Связанные вопросы</h4>
+            <ul>
+                <#list linked as question>
+                    <li>
+                        <a href="${urlResolver.getQuestionUrl(question)}">${question.title}</a>
+                    </li>
+                </#list>
+            </ul>
         </div>
+    </#if>
 </#macro>

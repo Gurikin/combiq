@@ -22,7 +22,7 @@ public interface QuestionService {
 
     void restoreQuestion(UserContext uc, String questionId);
 
-    Set<Question> getLinkedQuestion(UserContext uc, Set<String> id);
+    List<Question> getQuestions(Set<String> id);
 
     Question getQuestion(String id);
 

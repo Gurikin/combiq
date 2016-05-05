@@ -52,6 +52,7 @@ public class QuestionEntity {
 
     private int askedToday;
 
+    @Field(index = FieldIndex.not_analyzed, type = FieldType.String)
     private Set<String> linkedQuestions;
 
     public Date getLastModify() {

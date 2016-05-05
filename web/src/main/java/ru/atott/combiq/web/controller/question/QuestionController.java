@@ -114,10 +114,7 @@ public class QuestionController extends BaseController {
         viewBuilder.setQuestionsWithLatestComments(questionsWithLatestComments);
         viewBuilder.setFavorite(favoriteQuestionService.isFavoriteQuestion(getUc(), questionId));
         viewBuilder.setAsked(askedQuestionService.isAskedQuestion(getUc(), questionId));
-        if(question.getLinkedQuestions() != null) {
-            viewBuilder.setLinkedQuestions(questionService
-                    .getLinkedQuestion(getUc(), question.getLinkedQuestions()));
-        }
+        viewBuilder.setLinkedQuestions(questionService.getQuestions(question.getLinkedQuestions()));
         return viewBuilder.build();
     }
 

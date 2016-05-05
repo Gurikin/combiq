@@ -148,20 +148,25 @@ public class QuestionServiceImpl implements QuestionService {
             questionEntity.setTitle(question.getTitle());
             questionEntity.setAuthorId(uc.getUserId());
             questionEntity.setAuthorName(uc.getUserName());
-            question.setLinkedQuestions(question.getLinkedQuestions());
+            questionEntity.setLinkedQuestions(question.getLinkedQuestions());
+
             eventService.createQuestion(uc, questionEntity);
         } else {
             questionEntity = questionRepository.findOne(question.getId());
             questionEntity.setClassNames(null);
             questionEntity.setTitle(question.getTitle());
-            eventService.editQuestion(uc, questionEntity);
-            Set<String> previusLinked = questionEntity.getLinkedQuestions();
-            if(previusLinked !=null ) {
-                previusLinked.removeAll(question.getLinkedQuestions());
-                final String id = questionEntity.getId();
-                previusLinked.forEach(x -> unLinkQuestion(id, x));
+
+            Set<String> previousLinkedQuestions = questionEntity.getLinkedQuestions();
+            if (previousLinkedQuestions != null) {
+                previousLinkedQuestions = new HashSet<>(previousLinkedQuestions);
+                previousLinkedQuestions.removeAll(question.getLinkedQuestions());
+                previousLinkedQuestions
+                        .forEach(previousQuestionId -> unlinkQuestion(previousQuestionId, question.getId()));
             }
+
+            eventService.editQuestion(uc, questionEntity);
         }
+
         questionEntity.setLastModify(question.getLastModify());
         questionEntity.setHumanUrlTitle(transletirateService.lowercaseAndTransletirate(question.getTitle(), 80));
         questionEntity.setTags(question.getTags());
@@ -170,9 +175,10 @@ public class QuestionServiceImpl implements QuestionService {
         questionEntity.setLinkedQuestions(question.getLinkedQuestions());
         questionEntity = questionRepository.save(questionEntity);
         question.setId(questionEntity.getId());
-        Set<String> linked = questionEntity.getLinkedQuestions();
-        if(linked != null) {
-            linked.forEach(x-> linkQuestion(question.getId(), x));
+
+        Set<String> linkedQuestions = questionEntity.getLinkedQuestions();
+        if (!CollectionUtils.isEmpty(linkedQuestions)) {
+            linkedQuestions.forEach(linkedQuestionId -> linkQuestion(linkedQuestionId, question.getId()));
         }
     }
 
@@ -253,38 +259,50 @@ public class QuestionServiceImpl implements QuestionService {
         questionRepository.save(questionEntity);
     }
 
-    private boolean linkQuestion(String linkSource, String linkTarget) {
-        QuestionEntity questionEntity = questionRepository.findOne(linkTarget);
-        if(questionEntity == null){
+    private boolean linkQuestion(String questionId, String linkedQuestionId) {
+        QuestionEntity questionEntity = questionRepository.findOne(questionId);
+
+        if (questionEntity == null) {
             return false;
         }
 
-        if(questionEntity.getLinkedQuestions() == null) {
-            questionEntity.setLinkedQuestions(new HashSet<>());
+        Set<String> linkedQuestions = new HashSet<>();
+
+        if (!CollectionUtils.isEmpty(questionEntity.getLinkedQuestions())) {
+            linkedQuestions.addAll(questionEntity.getLinkedQuestions());
         }
-        questionEntity.getLinkedQuestions().add(linkSource);
+
+        linkedQuestions.add(linkedQuestionId);
+        questionEntity.setLinkedQuestions(linkedQuestions);
+
         questionRepository.save(questionEntity);
+
         return true;
     }
 
-    private void unLinkQuestion(String linkSource, String linkTarget) {
-        QuestionEntity questionEntity = questionRepository.findOne(linkTarget);
-        if(questionEntity == null || questionEntity.getLinkedQuestions() == null){
+    private void unlinkQuestion(String questionId, String unlinkedQuestionId) {
+        QuestionEntity questionEntity = questionRepository.findOne(questionId);
+
+        if (CollectionUtils.isEmpty(questionEntity.getLinkedQuestions())){
             return;
         }
-        questionEntity.getLinkedQuestions().remove(linkSource);
+
+        Set<String> linkedQuestions = questionEntity.getLinkedQuestions();
+        linkedQuestions.remove(unlinkedQuestionId);
+        questionEntity.setLinkedQuestions(linkedQuestions);
+
         questionRepository.save(questionEntity);
     }
 
     @Override
-    public Set<Question> getLinkedQuestion(UserContext uc, Set<String> id) {
-        Set<Question> linkedQuestions = new HashSet<>();
-        QuestionMapper questionMapper = new QuestionMapper();
-        if(id == null || id.isEmpty()) {
-            return null;
+    public List<Question> getQuestions(Set<String> questionIds) {
+
+        if (CollectionUtils.isEmpty(questionIds)) {
+            return Collections.emptyList();
         }
-        questionRepository.findAll(id)
-                .forEach(x -> linkedQuestions.add(questionMapper.map(x)));
-        return linkedQuestions;
+
+        QuestionMapper questionMapper = new QuestionMapper();
+        Iterable<QuestionEntity> questions = questionRepository.findAll(questionIds);
+        return questionMapper.toList(questions);
     }
 }

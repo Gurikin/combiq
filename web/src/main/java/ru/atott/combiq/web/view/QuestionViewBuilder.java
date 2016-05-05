@@ -22,7 +22,7 @@ public class QuestionViewBuilder {
     private List<LatestComment> questionsWithLatestComments;
     private boolean favorite;
     private boolean asked;
-    private Set<Question> linkedQuestions;
+    private List<Question> linkedQuestions = Collections.emptyList();
 
     public String getDsl() {
         return dsl;
@@ -80,11 +80,11 @@ public class QuestionViewBuilder {
         this.questionsWithLatestComments = questionsWithLatestComments;
     }
 
-    public Set<Question> getLinkedQuestions() {
+    public List<Question> getLinkedQuestions() {
         return linkedQuestions;
     }
 
-    public void setLinkedQuestions(Set<Question> linkedQuestions) {
+    public void setLinkedQuestions(List<Question> linkedQuestions) {
         this.linkedQuestions = linkedQuestions;
     }
 
