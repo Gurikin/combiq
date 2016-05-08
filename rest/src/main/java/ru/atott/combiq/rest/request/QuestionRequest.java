@@ -1,6 +1,7 @@
 package ru.atott.combiq.rest.request;
 
 import com.google.common.collect.Lists;
+import org.elasticsearch.common.collect.Sets;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import java.util.List;
@@ -16,6 +17,7 @@ public class QuestionRequest {
         EXAMPLE.setBody("Markdown разметка содержания/ответа вопроса");
         EXAMPLE.setLevel("D1");
         EXAMPLE.setTags(Lists.newArrayList("core", "jms"));
+        EXAMPLE.setLinkedQuestions(Sets.newHashSet("1", "23", "355"));
     }
 
     @NotEmpty

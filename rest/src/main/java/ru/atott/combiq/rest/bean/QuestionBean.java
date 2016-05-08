@@ -22,6 +22,7 @@ public class QuestionBean {
         EXAMPLE.setTags(Lists.newArrayList("concurrency"));
         EXAMPLE.setTitle("Как сделать Safe Publishing используя synchronized?");
         EXAMPLE.setUri("http://combiq.ru/questions/577/kak-sdelat-safe-publishing-ispolzuya-synchronized");
+        EXAMPLE.setLinkedQuestions(QuestionLinkBean.EXAMPLE_LIST);
         EXAMPLE_LIST = Lists.newArrayList(EXAMPLE);
     }
 
@@ -41,7 +42,7 @@ public class QuestionBean {
 
     private MarkdownContentBean body;
 
-    private Set<String> linkedQuestions;
+    private List<QuestionLinkBean> linkedQuestions;
 
     public String getId() {
         return id;
@@ -107,11 +108,11 @@ public class QuestionBean {
         this.body = body;
     }
 
-    public Set<String> getLinkedQuestions() {
+    public List<QuestionLinkBean> getLinkedQuestions() {
         return linkedQuestions;
     }
 
-    public void setLinkedQuestions(Set<String> linkedQuestions) {
+    public void setLinkedQuestions(List<QuestionLinkBean> linkedQuestions) {
         this.linkedQuestions = linkedQuestions;
     }
 }

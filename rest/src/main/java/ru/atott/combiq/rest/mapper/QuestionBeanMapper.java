@@ -7,8 +7,9 @@ import ru.atott.combiq.rest.bean.QuestionBean;
 import ru.atott.combiq.rest.utils.BeanMapper;
 import ru.atott.combiq.rest.utils.RestContext;
 import ru.atott.combiq.service.bean.Question;
-
+import ru.atott.combiq.service.question.QuestionService;
 import java.util.Collections;
+import java.util.List;
 
 public class QuestionBeanMapper implements BeanMapper<Question, QuestionBean> {
 
@@ -28,7 +29,13 @@ public class QuestionBeanMapper implements BeanMapper<Question, QuestionBean> {
         bean.setChangeDate(source.getLastModify());
         bean.setCommentsCount(source.getComments() != null ? source.getComments().size() : 0);
         bean.setLevel(source.getLevel());
-        bean.setLinkedQuestions(source.getLinkedQuestions());
+
+        if (!CollectionUtils.isEmpty(source.getLinkedQuestions())) {
+            QuestionService questionService = restContext.getApplicationContext().getBean(QuestionService.class);
+            List<Question> linkedQuestions = questionService.getQuestions(source.getLinkedQuestions());
+            QuestionLinkBeanMapper questionLinkBeanMapper = new QuestionLinkBeanMapper();
+            bean.setLinkedQuestions(questionLinkBeanMapper.toList(restContext, linkedQuestions));
+        }
 
         if (!MarkdownContent.isEmpty(source.getBody())) {
             bean.setBody(new MarkdownContentBean(source.getBody()));

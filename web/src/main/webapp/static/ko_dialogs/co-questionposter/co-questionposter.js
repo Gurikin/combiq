@@ -39,13 +39,7 @@ define([
                     self.title(question.title);
                     self.body(question.body && question.body.markdown);
                     self.selectedTags(question.tags || []);
-                    (question.linkedQuestions || []).forEach(function(id) {
-                        ajax
-                            .rest('GET', '/rest/v1/question/'+id)
-                            .done(function(question) {
-                                self.linked.push(question);
-                            })
-                    })
+                    self.linked(question.linkedQuestions || []);
                 });
         }
     }
