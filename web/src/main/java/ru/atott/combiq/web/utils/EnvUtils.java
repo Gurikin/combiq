@@ -6,6 +6,10 @@ public final class EnvUtils {
 
     private EnvUtils() { }
 
+    public static String getNode() {
+        return System.getProperty("node");
+    }
+
     public static String getEnv() {
         return System.getProperty("env");
     }

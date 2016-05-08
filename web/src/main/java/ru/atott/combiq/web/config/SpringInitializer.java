@@ -38,6 +38,7 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 import ru.atott.combiq.web.aop.CommonViewAttributesInjector;
+import ru.atott.combiq.web.aop.XCoNodeWriterInterceptor;
 import ru.atott.combiq.web.filter.RequestHolderFilter;
 import ru.atott.combiq.web.security.CombiqLogoutHandler;
 import ru.atott.combiq.web.security.CombiqUserDetailsService;
@@ -114,11 +115,13 @@ public class SpringInitializer extends AbstractAnnotationConfigDispatcherServlet
     public static class MvcConfiguration extends WebMvcConfigurerAdapter {
         @Autowired
         private CommonViewAttributesInjector commonViewAttributesInjector;
+        @Autowired
+        private XCoNodeWriterInterceptor xCoNodeWriterInterceptor;
 
         @Override
         public void addInterceptors(InterceptorRegistry registry) {
-            registry
-                    .addInterceptor(commonViewAttributesInjector);
+            registry.addInterceptor(commonViewAttributesInjector);
+            registry.addInterceptor(xCoNodeWriterInterceptor);
         }
 
         @Bean
