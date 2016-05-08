@@ -14,6 +14,7 @@ import ru.atott.combiq.service.site.UrlResolver;
 import ru.atott.combiq.service.user.UserService;
 import ru.atott.combiq.web.security.AuthService;
 import ru.atott.combiq.web.security.CombiqUser;
+import ru.atott.combiq.web.utils.EnvUtils;
 import ru.atott.combiq.web.utils.ViewUtils;
 import ru.atott.combiq.web.view.InstantMessageHolder;
 
@@ -101,6 +102,7 @@ public class CommonViewAttributesInjector extends HandlerInterceptorAdapter {
 
             modelAndView.addObject("utils", viewUtils);
             modelAndView.addObject("env", System.getProperty("env"));
+            modelAndView.addObject("node", EnvUtils.getNode());
             modelAndView.addObject("resourceVersion", resourceVersion);
             modelAndView.addObject("user", user);
 
@@ -124,15 +126,22 @@ public class CommonViewAttributesInjector extends HandlerInterceptorAdapter {
             modelAndView.addObject("facebookClientState", state);
             modelAndView.addObject("facebookCallbackUrl", urlResolver.externalize("/login/callback/facebook.do"));
             modelAndView.addObject("instantMessage", instantMessageHolder.get());
-            modelAndView.addObject("toolboxVisible", toolboxVisible);
-            modelAndView.addObject("toolboxColor", toolboxColor);
-            modelAndView.addObject("toolboxText", toolboxText);
             modelAndView.addObject("githubEnable", githubEnable);
             modelAndView.addObject("vkEnable", vkEnable);
             modelAndView.addObject("stackexchangeEnable", stackexchangeEnable);
             modelAndView.addObject("facebookEnable", facebookEnable);
             modelAndView.addObject("latestCommentFeed", latestCommentSearchService.get5LatestComments());
             modelAndView.addObject("options", optionsService.getCachedOptions());
+
+            if (EnvUtils.isProductionClusterNodeRequest(request)) {
+                modelAndView.addObject("toolboxVisible", true);
+                modelAndView.addObject("toolboxColor", toolboxColor);
+                modelAndView.addObject("toolboxText", "Production cluster's node: " + EnvUtils.getNode());
+            } else {
+                modelAndView.addObject("toolboxVisible", toolboxVisible);
+                modelAndView.addObject("toolboxColor", toolboxColor);
+                modelAndView.addObject("toolboxText", toolboxText);
+            }
 
             modelAndView.addObject(INJECTED, true);
         }

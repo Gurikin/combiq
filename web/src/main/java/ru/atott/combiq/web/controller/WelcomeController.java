@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import ru.atott.combiq.web.utils.EnvUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,7 +43,11 @@ public class WelcomeController extends BaseController {
 
     @RequestMapping(value = "robots.txt", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<String> robots() throws IOException {
+    public ResponseEntity<String> robots(HttpServletRequest request) throws IOException {
+        if (EnvUtils.isProductionClusterNodeRequest(request)) {
+            return new ResponseEntity<>("User-agent: *\nDisallow: /", HttpStatus.OK);
+        }
+
         try (InputStream inputStream = EnvUtils.getEnvResourceAsStream("robots.txt")) {
             return new ResponseEntity<>(IOUtils.toString(inputStream, "utf-8"), HttpStatus.OK);
         }

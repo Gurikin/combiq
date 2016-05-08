@@ -92,7 +92,7 @@
         <#if toolboxVisible>
             <div class="co-toolbox" style="background-color: ${toolboxColor!} !important;">
                 <div class="container">
-                    Это тестовый стенд проекта <a href="http://combiq.ru/project">combiq.ru</a>,
+                    Это стенд проекта <a href="http://combiq.ru/project">combiq.ru</a>,
                     окружение <strong>${env}</strong>.
                     ${toolboxText!}
                 </div>
@@ -122,6 +122,11 @@
                                 <img style="margin-top: -12px;" src="/static/images/social/jirasoftware_rgb_white_atlassian.png" alt="JIRA">
                             </a></span>
                         </div>
+                        <#if node??>
+                            <div>
+                                Node: <b>${node!''}</b>
+                            </div>
+                        </#if>
                     </div>
                     <span class="co-informer">
                         <#if env == 'prod'>
