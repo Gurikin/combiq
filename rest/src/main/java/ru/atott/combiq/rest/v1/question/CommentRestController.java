@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.*;
 import ru.atott.combiq.dao.entity.QuestionComment;
 import ru.atott.combiq.rest.mapper.CommentBeanMapper;
 import ru.atott.combiq.rest.request.CommentRequest;
+import ru.atott.combiq.rest.utils.RestContext;
 import ru.atott.combiq.rest.v1.BaseRestController;
+import ru.atott.combiq.service.question.QuestionBuilder;
 import ru.atott.combiq.service.question.QuestionService;
 
 import java.util.List;
@@ -37,9 +39,14 @@ public class CommentRestController extends BaseRestController {
     @PreAuthorize("hasAnyRole('user')")
     public Object createComment(@PathVariable("questionId") String questionId,
                                 @RequestBody CommentRequest request) {
-        questionService.saveComment(getContext().getUc(), questionId, request.getContent());
+        RestContext restContext = getContext();
+
+        QuestionBuilder questionBuilder = questionService.createQuestionBuilder(restContext.getUc(), questionId);
+        QuestionComment questionComment = questionBuilder.addComment(request.getContent());
+        questionService.saveQuestion(restContext.getUc(), questionBuilder);
+
         CommentBeanMapper mapper = new CommentBeanMapper();
-        return mapper.map(getContext(), questionService.getQuestion(questionId).getLastComment());
+        return mapper.map(restContext, questionComment);
     }
 
     /**
@@ -66,8 +73,13 @@ public class CommentRestController extends BaseRestController {
     public Object udpateComment(@PathVariable("questionId") String questionId,
                                 @PathVariable("commentId") String commentId,
                                 @RequestBody CommentRequest request) {
-        questionService.updateComment(getContext().getUc(), questionId, commentId, request.getContent());
-        return getComment(questionId, commentId);
+        RestContext restContext = getContext();
+        QuestionBuilder questionBuilder = questionService.createQuestionBuilder(restContext.getUc(), questionId);
+        QuestionComment questionComment = questionBuilder.setCommentContent(commentId, request.getContent());
+        questionService.saveQuestion(restContext.getUc(), questionBuilder);
+
+        CommentBeanMapper mapper = new CommentBeanMapper();
+        return mapper.map(restContext, questionComment);
     }
 
 
@@ -88,7 +100,10 @@ public class CommentRestController extends BaseRestController {
     @PreAuthorize("hasAnyRole('user')")
     public Object deleteComment(@PathVariable("questionId") String questionId,
                                 @PathVariable("commentId") String commentId) {
-        questionService.deleteComment(getContext().getUc(), questionId, commentId);
+        RestContext restContext = getContext();
+        QuestionBuilder questionBuilder = questionService.createQuestionBuilder(restContext.getUc(), questionId);
+        questionBuilder.removeComment(commentId);
+        questionService.saveQuestion(restContext.getUc(), questionBuilder);
         return responseOk();
     }
 

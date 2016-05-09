@@ -135,9 +135,12 @@
                 favorite: ${favorite?c},
                 questionId: '${question.id?js_string}'">
             </co-star>
-            <div class="co-question-body">
-                <@parts.contentEditor content=question.body url='/questions/${question.id}/content' />
-            </div>
+
+            <#if (question.body.html)??>
+                <div class="co-question-body">
+                    ${question.body.html!}
+                </div>
+            </#if>
 
         </div>
 

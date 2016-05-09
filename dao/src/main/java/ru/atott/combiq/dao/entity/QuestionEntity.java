@@ -1,5 +1,6 @@
 package ru.atott.combiq.dao.entity;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -9,12 +10,14 @@ import ru.atott.combiq.dao.Types;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Document(indexName = "#{domainResolver.resolveQuestionIndex()}", type = Types.question)
 public class QuestionEntity {
 
     public static final String TIMESTAMP_FIELD = "timestamp";
+
     public static final String ASKEDCOUNT_FIELD = "askedCount";
 
     @Id
@@ -125,6 +128,16 @@ public class QuestionEntity {
 
     public void setBody(MarkdownContent body) {
         this.body = body;
+    }
+
+    public QuestionComment getComment(String commentId) {
+        if (CollectionUtils.isEmpty(comments)) {
+            return null;
+        }
+
+        return comments.stream()
+                .filter(comment -> Objects.equals(comment.getId(), commentId))
+                .findAny().orElse(null);
     }
 
     public List<QuestionComment> getComments() {

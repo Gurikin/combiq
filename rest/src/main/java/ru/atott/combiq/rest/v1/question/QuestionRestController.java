@@ -10,6 +10,7 @@ import ru.atott.combiq.rest.utils.RestContext;
 import ru.atott.combiq.rest.v1.BaseRestController;
 import ru.atott.combiq.service.bean.Question;
 import ru.atott.combiq.service.markdown.MarkdownService;
+import ru.atott.combiq.service.question.QuestionBuilder;
 import ru.atott.combiq.service.question.QuestionService;
 import ru.atott.combiq.service.search.question.SearchContext;
 import ru.atott.combiq.service.search.question.SearchContextFactory;
@@ -17,10 +18,7 @@ import ru.atott.combiq.service.search.question.SearchResponse;
 import ru.atott.combiq.service.search.question.SearchService;
 
 import javax.validation.Valid;
-import java.util.Collections;
-import java.util.Date;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 public class QuestionRestController extends BaseRestController {
@@ -116,13 +114,11 @@ public class QuestionRestController extends BaseRestController {
     @PreAuthorize("hasAnyRole('sa','contenter')")
     public Object createQuestion(
             @Valid @RequestBody QuestionRequest request) {
-
         RestContext context = getContext();
 
-        Question question = new Question();
-        updateAndSaveQuestion(context, question, request);
-
-        questionService.saveQuestion(context.getUc(), question);
+        QuestionBuilder questionBuilder = questionService.createQuestionBuilder(context.getUc(), null);
+        updateQuestion(questionBuilder, request);
+        Question question = questionService.saveQuestion(context.getUc(), questionBuilder);
 
         QuestionBeanMapper questionBeanMapper = new QuestionBeanMapper();
         return questionBeanMapper.map(context, question);
@@ -150,26 +146,21 @@ public class QuestionRestController extends BaseRestController {
             @PathVariable("questionId") String questionId,
             @Valid @RequestBody QuestionRequest request) {
 
-        Question question = questionService.getQuestion(questionId);
-
-        if (question == null) {
-            return responseNotFound();
-        }
-
         RestContext context = getContext();
-        updateAndSaveQuestion(context, question, request);
+        QuestionBuilder questionBuilder = questionService.createQuestionBuilder(context.getUc(), questionId);
+        updateQuestion(questionBuilder, request);
+        Question question = questionService.saveQuestion(context.getUc(), questionBuilder);
 
         QuestionBeanMapper questionBeanMapper = new QuestionBeanMapper();
         return questionBeanMapper.map(context, question);
     }
 
-    private void updateAndSaveQuestion(RestContext context, Question question, QuestionRequest request) {
-        question.setTitle(request.getTitle());
-        question.setBody(markdownService.toMarkdownContent(context.getUc(), request.getBody()));
-        question.setLevel(request.getLevel());
-        question.setTags(request.getTags() != null ? request.getTags() : Collections.emptyList());
-        question.setLastModify(new Date());
-        question.setLinkedQuestions(request.getLinkedQuestions());
-        questionService.saveQuestion(context.getUc(), question);
+    private void updateQuestion(QuestionBuilder questionBuilder, QuestionRequest request) {
+        questionBuilder
+                .setTitle(request.getTitle())
+                .setBody(request.getBody())
+                .setLevel(request.getLevel())
+                .setTags(request.getTags())
+                .setLinkedQuestions(request.getLinkedQuestions());
     }
 }

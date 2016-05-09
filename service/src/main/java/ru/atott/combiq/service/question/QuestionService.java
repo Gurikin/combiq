@@ -8,23 +8,19 @@ import java.util.Set;
 
 public interface QuestionService {
 
-    void saveComment(UserContext uc, String questionId, String comment);
-
-    void updateComment(UserContext uc, String questionId, String commentId, String comment);
-
-    void deleteComment(UserContext uc, String questionId, String commentId);
-
-    void saveQuestionBody(UserContext uc, String questionId, String body);
-
-    void saveQuestion(UserContext uc, Question question);
-
     void deleteQuestion(UserContext uc, String questionId);
 
     void restoreQuestion(UserContext uc, String questionId);
 
-    List<Question> getQuestions(Set<String> id);
+    List<Question> getQuestions(Set<String> questionIds);
 
     Question getQuestion(String id);
 
     List<String> refreshMentionedClassNames(Question question);
+
+    List<String> getMentionedClassNames(String title);
+
+    QuestionBuilder createQuestionBuilder(UserContext userContext, String questionId);
+
+    Question saveQuestion(UserContext userContext, QuestionBuilder questionBuilder);
 }

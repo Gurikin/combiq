@@ -2,7 +2,6 @@ package ru.atott.combiq.service.question;
 
 import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.Validate;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,32 +9,20 @@ import ru.atott.combiq.dao.entity.QuestionComment;
 import ru.atott.combiq.dao.entity.QuestionEntity;
 import ru.atott.combiq.dao.repository.Jdk8ClassRepository;
 import ru.atott.combiq.dao.repository.QuestionRepository;
-import ru.atott.combiq.service.AccessException;
-import ru.atott.combiq.service.CombiqConstants;
-import ru.atott.combiq.service.ServiceException;
 import ru.atott.combiq.service.bean.Question;
 import ru.atott.combiq.service.mapper.QuestionMapper;
-import ru.atott.combiq.service.markdown.MarkdownService;
 import ru.atott.combiq.service.site.EventService;
 import ru.atott.combiq.service.site.UserContext;
-import ru.atott.combiq.service.util.NumberService;
-import ru.atott.combiq.service.util.TransletirateService;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-
-import static ru.atott.combiq.service.user.UserRoles.contenter;
-import static ru.atott.combiq.service.user.UserRoles.sa;
 
 @Service
 public class QuestionServiceImpl implements QuestionService {
 
     private static String[] alphabet = 
             {"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"};
-
-    @Autowired
-    private MarkdownService markdownService;
 
     @Autowired
     private QuestionRepository questionRepository;
@@ -46,147 +33,23 @@ public class QuestionServiceImpl implements QuestionService {
     @Autowired
     private EventService eventService;
 
-    @Autowired
-    private NumberService numberService;
-
-    @Autowired
-    TransletirateService transletirateService;
-
-    @Override
-    public void saveComment(UserContext uc, String questionId, String comment) {
-        Validate.isTrue(!uc.isAnonimous());
-        Validate.notEmpty(comment);
-
-        QuestionEntity questionEntity = questionRepository.findOne(questionId);
-        List<QuestionComment> comments = questionEntity.getComments();
-
-        if (comments == null) {
-            comments = new ArrayList<>();
-        } else {
-            comments = new ArrayList<>(comments);
-        }
-
-        QuestionComment questionComment = new QuestionComment();
-        questionComment.setContent(markdownService.toMarkdownContent(uc, comment));
-        questionComment.setPostDate(new Date());
-        questionComment.setUserId(uc.getUserId());
-        questionComment.setId(UUID.randomUUID().toString());
-
-        if (uc.getRoles().contains(sa)) {
-            questionComment.setUserName(CombiqConstants.combiqUserName);
-        } else {
-            questionComment.setUserName(uc.getUserName());
-        }
-        comments.add(questionComment);
-
-        questionEntity.setComments(comments);
-        questionRepository.save(questionEntity);
-
-        eventService.createPostQuestionCommentEvent(uc, questionEntity, questionComment.getId());
-    }
-
-    @Override
-    public void updateComment(UserContext uc, String questionId, String commentId, String commentMarkdown) {
-        Validate.isTrue(!uc.isAnonimous());
-        Validate.notEmpty(commentMarkdown);
-
-        QuestionEntity questionEntity = questionRepository.findOne(questionId);
-        List<QuestionComment> comments = questionEntity.getComments();
-
-        if (comments == null) {
-            comments = Collections.emptyList();
-        }
-
-        QuestionComment questionComment = comments.stream()
-                .filter(comment -> Objects.equals(comment.getId(), commentId))
-                .findFirst().orElse(null);
-
-        if (questionComment == null) {
-            throw new ServiceException("Question comment " + commentId + " not found.");
-        }
-
-        if (!Objects.equals(questionComment.getUserId(), uc.getUserId())) {
-
-            if (Sets.intersection(uc.getRoles(), Sets.newHashSet(sa, contenter)).size() == 0) {
-                throw new AccessException();
-            }
-        }
-
-        questionComment.setContent(markdownService.toMarkdownContent(uc, commentMarkdown));
-        questionComment.setEditDate(new Date());
-
-        if (!Objects.equals(questionComment.getUserId(), uc.getUserId())) {
-            questionComment.setEditUserId(uc.getUserId());
-            questionComment.setEditUserName(uc.getUserName());
-        } else {
-            questionComment.setEditUserId(null);
-            questionComment.setEditUserName(null);
-        }
-
-        questionRepository.save(questionEntity);
-
-        eventService.createEditQuestionCommentEvent(uc, questionEntity, commentId);
-    }
-
-    @Override
-    public void saveQuestionBody(UserContext uc, String questionId, String body) {
-        QuestionEntity questionEntity = questionRepository.findOne(questionId);
-        questionEntity.setBody(markdownService.toMarkdownContent(uc, body));
-        questionRepository.save(questionEntity);
-    }
-
-    @Override
-    public void saveQuestion(UserContext uc, Question question){
-        Validate.isTrue(!uc.isAnonimous());
-
-        QuestionEntity questionEntity;
-
-        if (question.getId() == null){
-            questionEntity = new QuestionEntity();
-            questionEntity.setTimestamp(new Date().getTime());
-            questionEntity.setId(Long.toString(numberService.getUniqueNumber()));
-            questionEntity.setTitle(question.getTitle());
-            questionEntity.setAuthorId(uc.getUserId());
-            questionEntity.setAuthorName(uc.getUserName());
-            questionEntity.setLinkedQuestions(question.getLinkedQuestions());
-
-            eventService.createQuestion(uc, questionEntity);
-        } else {
-            questionEntity = questionRepository.findOne(question.getId());
-            questionEntity.setClassNames(null);
-            questionEntity.setTitle(question.getTitle());
-
-            Set<String> previousLinkedQuestions = questionEntity.getLinkedQuestions();
-            if (previousLinkedQuestions != null) {
-                previousLinkedQuestions = new HashSet<>(previousLinkedQuestions);
-                previousLinkedQuestions.removeAll(question.getLinkedQuestions());
-                previousLinkedQuestions
-                        .forEach(previousQuestionId -> unlinkQuestion(previousQuestionId, question.getId()));
-            }
-
-            eventService.editQuestion(uc, questionEntity);
-        }
-
-        questionEntity.setLastModify(question.getLastModify());
-        questionEntity.setHumanUrlTitle(transletirateService.lowercaseAndTransletirate(question.getTitle(), 80));
-        questionEntity.setTags(question.getTags());
-        questionEntity.setLevel(Integer.parseInt(question.getLevel().substring(1)));
-        questionEntity.setBody(question.getBody());
-        questionEntity.setLinkedQuestions(question.getLinkedQuestions());
-        questionEntity = questionRepository.save(questionEntity);
-        question.setId(questionEntity.getId());
-
-        Set<String> linkedQuestions = questionEntity.getLinkedQuestions();
-        if (!CollectionUtils.isEmpty(linkedQuestions)) {
-            linkedQuestions.forEach(linkedQuestionId -> linkQuestion(linkedQuestionId, question.getId()));
-        }
-    }
-
     @Override
     public List<String> refreshMentionedClassNames(Question question) {
-        String text = question.getTitle();
+        List<String> mentionedClassNames = getMentionedClassNames(question.getTitle());
 
-        List<String> classNames = Arrays.asList(StringUtils.split(text, " ")).stream()
+        question.setClassNames(mentionedClassNames);
+
+        QuestionEntity questionEntity = questionRepository.findOne(question.getId());
+        questionEntity.setClassNames(mentionedClassNames);
+        questionRepository.save(questionEntity);
+
+        return mentionedClassNames;
+    }
+
+    @Override
+    public List<String> getMentionedClassNames(String title) {
+
+        List<String> classNames = Arrays.asList(StringUtils.split(title, " ")).stream()
                 .filter(StringUtils::isNotBlank)
                 .filter(s -> StringUtils.startsWithAny(s.toLowerCase(), alphabet))
                 .map(s -> s.replaceAll("[^A-z.]", ""))
@@ -204,13 +67,66 @@ public class QuestionServiceImpl implements QuestionService {
                     .collect(Collectors.toList());
         }
 
-        question.setClassNames(actualClassNames);
-
-        QuestionEntity questionEntity = questionRepository.findOne(question.getId());
-        questionEntity.setClassNames(actualClassNames);
-        questionRepository.save(questionEntity);
-
         return actualClassNames;
+    }
+
+    @Override
+    public QuestionBuilder createQuestionBuilder(UserContext userContext, String questionId) {
+        QuestionEntityBuilder builder;
+
+        if (questionId == null) {
+            builder = new QuestionEntityBuilder(userContext);
+        } else {
+            QuestionEntity questionEntity = questionRepository.findOne(questionId);
+
+            if (questionEntity == null) {
+                throw new QuestionNotFoundException("Question " + questionId + "is not found.");
+            }
+
+            builder = new QuestionEntityBuilder(userContext, questionEntity);
+        }
+
+        return builder;
+    }
+
+    @Override
+    public Question saveQuestion(UserContext userContext, QuestionBuilder questionBuilder) {
+        QuestionEntityBuilder questionEntityBuilder = (QuestionEntityBuilder) questionBuilder;
+        QuestionEntity questionEntity = questionEntityBuilder.build();
+        questionEntity = questionRepository.save(questionEntity);
+        String questionEntityId = questionEntity.getId();
+
+        Set<String> originalLinkedQuestions = questionEntityBuilder.getOriginalLinkedQuestions();
+        Set<String> linkedQuestions = questionEntity.getLinkedQuestions();
+        if (linkedQuestions == null) {
+            linkedQuestions = Collections.emptySet();
+        }
+
+        Sets
+                .difference(originalLinkedQuestions, linkedQuestions)
+                .forEach(previousQuestionId -> unlinkQuestion(previousQuestionId, questionEntityId));
+
+        Sets
+                .difference(linkedQuestions, originalLinkedQuestions)
+                .forEach(linkedQuestionId -> linkQuestion(linkedQuestionId, questionEntityId));
+
+
+        for (QuestionComment addedComment : questionEntityBuilder.getAddedComments()) {
+            eventService.createPostQuestionCommentEvent(userContext, questionEntity, addedComment.getId());
+        }
+
+        for (QuestionComment updatedComment : questionEntityBuilder.getUpdatedComments()) {
+            eventService.createEditQuestionCommentEvent(userContext, questionEntity, updatedComment.getId());
+        }
+
+        if (questionEntityBuilder.isCreated()) {
+            eventService.createQuestion(userContext, questionEntity);
+        } else {
+            eventService.editQuestion(userContext, questionEntity);
+        }
+
+        QuestionMapper questionMapper = new QuestionMapper();
+        return questionMapper.map(questionEntity);
     }
 
     @Override
@@ -234,29 +150,6 @@ public class QuestionServiceImpl implements QuestionService {
         QuestionEntity questionEntity = questionRepository.findOne(id);
         QuestionMapper questionMapper = new QuestionMapper();
         return questionMapper.safeMap(questionEntity);
-    }
-
-    @Override
-    public void deleteComment(UserContext uc, String questionId, String commentId) {
-        Validate.isTrue(!uc.isAnonimous());
-
-        QuestionEntity questionEntity = questionRepository.findOne(questionId);
-
-        if (CollectionUtils.isEmpty(questionEntity.getComments())) {
-            return;
-        }
-
-        List<QuestionComment> comments = questionEntity.getComments().stream()
-                .filter(comment -> {
-                    if (!Objects.equals(comment.getId(), commentId)) {
-                        return true;
-                    }
-
-                    return !(Objects.equals(comment.getUserId(), uc.getUserId()) || uc.hasAnyRole(sa, contenter));
-                })
-                .collect(Collectors.toList());
-        questionEntity.setComments(comments);
-        questionRepository.save(questionEntity);
     }
 
     private boolean linkQuestion(String questionId, String linkedQuestionId) {
