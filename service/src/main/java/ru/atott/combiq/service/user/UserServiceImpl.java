@@ -1,5 +1,6 @@
 package ru.atott.combiq.service.user;
 
+import com.hazelcast.core.IMap;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,6 +16,8 @@ import ru.atott.combiq.service.bean.UserQualifier;
 import ru.atott.combiq.service.bean.UserType;
 import ru.atott.combiq.service.mapper.UserMapper;
 import ru.atott.combiq.service.site.EventService;
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -196,10 +199,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findById(String userId) {
-        UserEntity userEntity = userRepository.findOne(userId);
+        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
+        IMap userMap = hazelcastInstance.getMap("User");
+        if (userMap.containsKey(userId)) {
+            return (User) userMap.get(userId);
+        }
 
+        UserEntity userEntity = userRepository.findOne(userId);
+        User user = userMapper.map(userEntity);
         if (userEntity != null) {
-            return userMapper.map(userEntity);
+            userMap.put(userId, user);
+            return user;
         }
 
         return null;

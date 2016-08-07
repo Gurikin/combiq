@@ -3,29 +3,33 @@ package ru.atott.combiq.web.utils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import ru.atott.combiq.service.util.ApplicationContextHolder;
+import ru.atott.combiq.service.util.EnvHolder;
 import ru.atott.combiq.web.config.PropertiesHolder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.InputStream;
 
-public final class EnvUtils {
+public final class WebUtils {
 
     private static Boolean production;
 
     private static String productionDomain;
 
-    private EnvUtils() { }
+    private WebUtils() { }
 
     public static String getNode() {
-        return System.getProperty("node");
+        ApplicationContext applicationContext = ApplicationContextHolder.getApplicationContext();
+        return applicationContext.getBean(EnvHolder.class).getNode();
     }
 
     public static String getEnv() {
-        return System.getProperty("env");
+        ApplicationContext applicationContext = ApplicationContextHolder.getApplicationContext();
+        return applicationContext.getBean(EnvHolder.class).getEnv();
     }
 
     public static InputStream getEnvResourceAsStream(String resourceFileName) {
-        return EnvUtils.class.getResourceAsStream("/env/" + getEnv() + "/" + resourceFileName);
+        ApplicationContext applicationContext = ApplicationContextHolder.getApplicationContext();
+        return applicationContext.getBean(EnvHolder.class).getEnvResourceAsStream(resourceFileName);
     }
 
     public static boolean isProduction() {

@@ -9,6 +9,7 @@ import ru.atott.combiq.dao.entity.QuestionEntity;
 import ru.atott.combiq.dao.entity.UserEntity;
 import ru.atott.combiq.dao.repository.QuestionRepository;
 import ru.atott.combiq.dao.repository.UserRepository;
+import ru.atott.combiq.service.site.EventService;
 import ru.atott.combiq.service.site.UserContext;
 
 import java.util.HashMap;
@@ -24,6 +25,9 @@ public class AskedQuestionServiceImpl implements AskedQuestionService {
 
     @Autowired
     private QuestionRepository questionRepository;
+
+    @Autowired
+    private EventService eventService;
 
     @Override
     public void addAskedCount(UserContext uc, String questionId) {
@@ -82,6 +86,9 @@ public class AskedQuestionServiceImpl implements AskedQuestionService {
             questionEntity.setAskedCount(askedCount);
             questionEntity.setAskedToday(0);
         });
-        questionRepository.save(questionEntities);
+        if (questionEntities.size() > 0) {
+            questionRepository.save(questionEntities);
+        }
+        eventService.recountQuestions();
     }
 }

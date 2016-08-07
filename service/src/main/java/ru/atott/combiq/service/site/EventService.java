@@ -59,4 +59,9 @@ public interface EventService {
                         uc.getUserName() + ".",
                 new Link("Вопрос", "/questions/" + questionEntity.getId()));
     }
+
+    default void recountQuestions() {
+        createEvent(null, EventType.RESTORE_QUESTION, "ВОпросы обновленны");
+
+    }
 }

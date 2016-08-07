@@ -1,10 +1,11 @@
 package ru.atott.combiq.service.bean;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-public class User {
+public class User implements Serializable {
     private String id;
     private String name;
     private String email;

@@ -48,6 +48,7 @@
         <logstash.logback.version>4.6</logstash.logback.version>
         <dom4j.version>1.6.1</dom4j.version>
         <jsoup.version>1.8.3</jsoup.version>
+        <hazelcast.version>3.6</hazelcast.version>
     </properties>
 
     <dependencyManagement>
@@ -151,6 +152,11 @@
                 <groupId>org.jsoup</groupId>
                 <artifactId>jsoup</artifactId>
                 <version>${jsoup.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hazelcast</groupId>
+                <artifactId>hazelcast</artifactId>
+                <version>${hazelcast.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
