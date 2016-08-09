@@ -5,6 +5,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.atott.combiq.rest.mapper.QuestionBeanMapper;
 import ru.atott.combiq.rest.mapper.QuestionSearchBeanMapper;
+import ru.atott.combiq.rest.request.QuestionChangeRequest;
 import ru.atott.combiq.rest.request.QuestionRequest;
 import ru.atott.combiq.rest.utils.RestContext;
 import ru.atott.combiq.rest.v1.BaseRestController;
@@ -85,7 +86,8 @@ public class QuestionRestController extends BaseRestController {
     @RequestMapping(value = "/rest/v1/question/{questionId}", method = RequestMethod.GET)
     @ResponseBody
     public Object get(
-            @PathVariable("questionId") String questionId) {
+            @PathVariable("questionId") String questionId,
+            @RequestBody(required = false) QuestionRequest request) {
 
         Question question = questionService.getQuestion(questionId);
 
@@ -94,14 +96,19 @@ public class QuestionRestController extends BaseRestController {
         }
 
         QuestionBeanMapper questionMapper = new QuestionBeanMapper();
-        return questionMapper.map(getContext(), question);
+        if (request == null){
+            return questionMapper.map(getContext(), question);
+        }
+        else {
+            return questionMapper.requestMap(getContext(), question, request.getRequestedFields());
+        }
     }
 
     /**
      * Создать вопрос.
      *
      * @request.body.example
-     *      {@link QuestionRequest#EXAMPLE}
+     *      {@link QuestionChangeRequest#EXAMPLE}
      *
      * @response.200.doc
      *      В случае успеха, созданный вопрос.
@@ -113,7 +120,7 @@ public class QuestionRestController extends BaseRestController {
     @ResponseBody
     @PreAuthorize("hasAnyRole('sa','contenter')")
     public Object createQuestion(
-            @Valid @RequestBody QuestionRequest request) {
+            @Valid @RequestBody QuestionChangeRequest request) {
         RestContext context = getContext();
 
         QuestionBuilder questionBuilder = questionService.createQuestionBuilder(context.getUc(), null);
@@ -128,7 +135,7 @@ public class QuestionRestController extends BaseRestController {
      * Обновить вопрос по заданному идентификатору.
      *
      * @request.body.example
-     *      {@link QuestionRequest#EXAMPLE}
+     *      {@link QuestionChangeRequest#EXAMPLE}
      *
      * @param questionId
      *      Идентификатор обновляемого вопроса.
@@ -144,7 +151,7 @@ public class QuestionRestController extends BaseRestController {
     @PreAuthorize("hasAnyRole('sa','contenter')")
     public Object saveQuestion(
             @PathVariable("questionId") String questionId,
-            @Valid @RequestBody QuestionRequest request) {
+            @Valid @RequestBody QuestionChangeRequest request) {
 
         RestContext context = getContext();
         QuestionBuilder questionBuilder = questionService.createQuestionBuilder(context.getUc(), questionId);
@@ -155,7 +162,7 @@ public class QuestionRestController extends BaseRestController {
         return questionBeanMapper.map(context, question);
     }
 
-    private void updateQuestion(QuestionBuilder questionBuilder, QuestionRequest request) {
+    private void updateQuestion(QuestionBuilder questionBuilder, QuestionChangeRequest request) {
         questionBuilder
                 .setTitle(request.getTitle())
                 .setBody(request.getBody())

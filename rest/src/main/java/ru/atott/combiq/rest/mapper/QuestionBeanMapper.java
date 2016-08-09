@@ -2,12 +2,15 @@ package ru.atott.combiq.rest.mapper;
 
 import org.apache.commons.collections.CollectionUtils;
 import ru.atott.combiq.dao.entity.MarkdownContent;
+import ru.atott.combiq.dao.entity.QuestionEntity;
 import ru.atott.combiq.rest.bean.MarkdownContentBean;
 import ru.atott.combiq.rest.bean.QuestionBean;
 import ru.atott.combiq.rest.utils.BeanMapper;
 import ru.atott.combiq.rest.utils.RestContext;
 import ru.atott.combiq.service.bean.Question;
 import ru.atott.combiq.service.question.QuestionService;
+
+import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
 
@@ -42,5 +45,24 @@ public class QuestionBeanMapper implements BeanMapper<Question, QuestionBean> {
         }
 
         return bean;
+    }
+
+    public QuestionBean requestMap(RestContext restContext, Question source, List<String> requestedField) {
+        QuestionBean questionBeanSource = map(restContext, source);
+        QuestionBean questionBean = new QuestionBean();
+
+        Field[] filds = Question.class.getDeclaredFields();
+        for (Field field:filds){
+            if (requestedField.contains(field.getName())){
+                try {
+                    field.set(questionBean, field.get(questionBeanSource));
+                }
+                catch (IllegalAccessException e){
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return questionBean;
     }
 }
