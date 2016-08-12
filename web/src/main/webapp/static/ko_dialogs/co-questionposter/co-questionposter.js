@@ -31,9 +31,9 @@ define([
             var url = coUtils.getRestUrl('/rest/v1/question/{questionId}', {
                 questionId: this.id()
             });
-            requestedFields = {requestedFields: ['title', 'level', 'body', 'tags','linkedQuestions']};
+            var json = {requestedFields: ['title', 'level', 'body', 'tags', 'linkedQuestions']};
             ajax
-                .rest('GET', url, requestedFields)
+                .rest('GET', url, json)
                 .done(function(question) {
                     self.level(question.level);
                     self.title(question.title);

@@ -74,6 +74,9 @@ public class QuestionRestController extends BaseRestController {
      * @param questionId
      *      Идентификатор вопроса.
      *
+     * @request.body.example
+     *      {@link QuestionRequest#EXAMPLE}
+     *     *
      * @response.200.doc
      *      Вопрос по заданному идентификатору.
      *
@@ -96,7 +99,7 @@ public class QuestionRestController extends BaseRestController {
         }
 
         QuestionBeanMapper questionMapper = new QuestionBeanMapper();
-        if (request == null){
+        if (request == null || request.getRequestedFields().isEmpty()){
             return questionMapper.map(getContext(), question);
         }
         else {

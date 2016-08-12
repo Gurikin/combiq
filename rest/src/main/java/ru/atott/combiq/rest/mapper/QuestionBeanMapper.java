@@ -11,6 +11,7 @@ import ru.atott.combiq.service.bean.Question;
 import ru.atott.combiq.service.question.QuestionService;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.List;
 
@@ -51,13 +52,19 @@ public class QuestionBeanMapper implements BeanMapper<Question, QuestionBean> {
         QuestionBean questionBeanSource = map(restContext, source);
         QuestionBean questionBean = new QuestionBean();
 
-        Field[] filds = Question.class.getDeclaredFields();
+        Field[] filds = QuestionBean.class.getDeclaredFields();
         for (Field field:filds){
-            if (requestedField.contains(field.getName())){
+            if (requestedField.contains(field.getName())) {
                 try {
-                    field.set(questionBean, field.get(questionBeanSource));
-                }
-                catch (IllegalAccessException e){
+                    String methodName = field.getName();
+                    methodName = methodName.substring(0, 1).toUpperCase() + methodName.substring(1);
+                    Object param = QuestionBean.class.getMethod("get" + methodName).invoke(questionBeanSource);
+                    QuestionBean.class.getMethod("set" + methodName, field.getType()).invoke(questionBean, param);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
                     e.printStackTrace();
                 }
             }
