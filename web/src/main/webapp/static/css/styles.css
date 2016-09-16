@@ -476,6 +476,18 @@ a.co-action:hover {
     border-bottom: dotted 1px #00b7ff;
 }
 
+a.co-exit {
+    outline:none
+}
+
+a.co-exit:hover {
+    outline:none
+}
+
+a.co-exit:focus {
+    outline:none
+}
+
 .co-questionnaire-title {
     font-size: 12px;
     margin-bottom: 20px;
