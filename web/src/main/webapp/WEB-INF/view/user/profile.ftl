@@ -30,6 +30,9 @@
                 dsl: 'favorite:true',
                 size: 5">
             </co-questionssearch>
+            <a class="co-exit" href="/logout.do">
+                <h3>Выйти</h3>
+            </a>
         </div>
     </div>
 
